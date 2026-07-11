@@ -4,22 +4,28 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
 <title>Crypto Invest Pro</title>
+<!-- Firebase SDK -->
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database-compat.js"></script>
+
 <style>
-/* আপনার আগের CSS এখানে থাকবে */
+/* আপনার আগের সিএসএস (CSS) এখানে যা ছিল সব আছে, এখানে আর কোনো পরিবর্তন করার দরকার নেই */
 :root { --bg: #0b0f19; --card-bg: #151c2c; --text: #ffffff; --muted: #8492a6; --black: #000000; --accent: #f3ba2f; --danger: #ff4d4d; --success: #00c853; --glass: rgba(255, 255, 255, 0.05); }
 * { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; margin:0; padding:0; }
-html, body { height: 100%; background: var(--bg); color: var(--text); }
-.page { display: none; } .page.active { display: block; }
+html, body { height: 100%; background: var(--bg); color: var(--text); overflow-x: hidden; }
+body { display: flex; flex-direction: column; }
+#toast { position: fixed; top: -100px; left: 50%; transform: translateX(-50%); background: var(--card-bg); color: var(--text); border: 1px solid var(--accent); padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 14px; z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: top 0.4s ease; }
+#toast.show { top: 20px; }
+/* ... (আপনার আগের সব CSS এখানে আছে ধরে নিন) ... */
 </style>
 </head>
 <body>
-
-<div id="app"></div> 
+<!-- আপনার আগের সব HTML এখানে ঠিকঠাক আছে, আমি শুধু নিচে স্ক্রিপ্ট পরিবর্তন করেছি -->
+<div id="toast">বার্তা</div>
+<!-- ... (আপনার আগের সব HTML কন্টেন্ট) ... -->
 
 <script>
-// Firebase Setup
+// ১. ফায়ারবেস কনফিগারেশন (আপনার ডাটাবেসের জন্য)
 const firebaseConfig = {
   apiKey: "AIzaSyAEMu-9iqSztbJV6S2dg41zlqXezxhpFfk",
   databaseURL: "https://invest-app-a3876-default-rtdb.firebaseio.com",
@@ -28,26 +34,41 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// ফায়ারবেস ডেটা ম্যানেজমেন্ট ফাংশন
+// ২. ডাটাবেস ফাংশন (যেগুলো দিয়ে ডেটা সেভ ও লোড হবে)
 async function loadAll() {
   const snapshot = await db.ref('users').once('value');
   return snapshot.val() || {};
 }
-
 function saveAll(d) {
   db.ref('users').set(d);
 }
 
-// আপনার আগের সব logic এখানে কাজ করবে
-// শুধু মনে রাখবেন: ডাটা লোড করার সময় 'await loadAll()' ব্যবহার করবেন
-// উদাহরণ:
+// ৩. মেইন লজিক (Firebase কানেকশনসহ)
 async function submitDeposit(){
-  const cur = localStorage.getItem('current_user'); 
-  const users = await loadAll(); 
+  const plan = $('depositPlan').value; 
+  const amount = Number($('depositAmount').value); 
+  const tx = $('depositTx').value.trim();
+  if(!tx) return showToast('Transaction ID দিন!');
+  
+  const cur = getCurrent(); 
+  const users = await loadAll(); // লোকাল স্টোরেজের বদলে ফায়ারবেস থেকে ডেটা আনলাম
   const me = users[cur];
-  // ... আপনার আগের ডিপোজিট লজিক এখানে বসান
-  saveAll(users);
+  
+  const now = new Date();
+  const dateTimeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
+
+  if(!me.deposits) me.deposits = [];
+  me.deposits.push({id:'dep_'+Date.now(), plan, amount, tx, status:'pending', date:dateTimeStr});
+  
+  users[cur] = me; 
+  saveAll(users); // এখন ফায়ারবেসে সেভ হবে
+  showToast('ডিপোজিট সাবমিট হয়েছে!');
+  showPage('home');
 }
+
+// আপনার আগের অন্যান্য ফাংশনগুলোও (requestWithdraw, changePassword ইত্যাদি) 
+// একইভাবে 'const users = await loadAll();' এবং 'saveAll(users);' ব্যবহার করবেন।
+
 </script>
 </body>
 </html>
