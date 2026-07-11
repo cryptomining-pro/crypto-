@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+ <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="utf-8" />
@@ -21,7 +21,6 @@
 html, body { height: 100%; background: var(--bg); color: var(--text); overflow-x: hidden; }
 body { display: flex; flex-direction: column; }
 
-/* Custom Premium Toast Alert */
 #toast {
   position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
   background: var(--card-bg); color: var(--text); border: 1px solid var(--accent);
@@ -30,7 +29,6 @@ body { display: flex; flex-direction: column; }
 }
 #toast.show { top: 20px; }
 
-/* ---------- Loader ---------- */
 #loader { position: fixed; inset: 0; background: #0b0f19; display: flex; align-items: center; justify-content: center; z-index: 9999; }
 .loaderLayer { width: 320px; height: 220px; position: relative; }
 .coin { position: absolute; width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(180deg, #ffe066, #f3ba2f); display: flex; align-items: center; justify-content: center; color: #5c4300; font-weight: 900; opacity: 0; box-shadow: 0 0 20px rgba(243, 186, 47, 0.6); }
@@ -45,7 +43,6 @@ body { display: flex; flex-direction: column; }
   100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
 }
 
-/* ---------- Header ---------- */
 header { 
   background: var(--card-bg); border-bottom: 1px solid var(--glass); padding: 16px; 
   display: flex; justify-content: space-between; align-items: center;
@@ -55,13 +52,11 @@ header {
 .headBtn { background: var(--glass); border: none; color: var(--text); padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; }
 #adminBtn { background: var(--accent); color: var(--black); }
 
-/* ---------- Main Container ---------- */
 .mainContent { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 120px; -webkit-overflow-scrolling: touch; }
 .container { max-width: 600px; margin: 0 auto; }
 .card { background: var(--card-bg); border-radius: 16px; padding: 16px; border: 1px solid var(--glass); box-shadow: 0 8px 32px rgba(0,0,0,0.2); margin-bottom: 16px; }
 .muted { color: var(--muted); font-size: 13px; }
 
-/* Buttons & Inputs */
 .btn { background: var(--accent); color: var(--black); border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; transition: all 0.2s; display: block; text-align: center; text-decoration: none;}
 .btn:active { transform: scale(0.98); opacity: 0.9; }
 .btn.secondary { background: transparent; color: var(--text); border: 1px solid var(--glass); }
@@ -72,19 +67,16 @@ input, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px sol
 input:focus { border-color: var(--accent); }
 .eyeBtn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; }
 
-/* Pages */
 .page { display: none; animation: fadeIn 0.3s ease-in-out; }
 .page.active { display: block; }
 @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-/* Crypto Grid */
 .plans { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 10px; }
 .plan { background: var(--card-bg); border: 1px solid var(--glass); border-radius: 16px; padding: 14px; text-align: center; transition: 0.3s; }
 .crypto-img { width: 50px; height: 50px; margin-bottom: 10px; object-fit: contain; }
 .planTitle { font-weight: 800; font-size: 15px; }
 .planSub { color: var(--accent); font-size: 13px; font-weight: 700; margin: 4px 0 10px; }
 
-/* Bottom Nav */
 .bottomNav { position: fixed; left: 0; right: 0; bottom: 0; height: 70px; background: var(--card-bg); border-top: 1px solid var(--glass); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
 .navBtn { background: transparent; color: var(--muted); border: none; padding: 8px; cursor: pointer; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; gap: 4px; align-items: center; }
 .navBtn.active { color: var(--accent); }
@@ -92,12 +84,10 @@ input:focus { border-color: var(--accent); }
 
 .listItem { padding: 12px; border-radius: 12px; background: rgba(0,0,0,0.15); border: 1px solid var(--glass); margin-bottom: 10px; font-size: 14px; }
 
-/* Auth Overlay */
 #authOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 4000; }
 .authCard { width: 90%; max-width: 400px; background: var(--card-bg); padding: 24px; border-radius: 24px; border: 1px solid var(--glass); }
 .authToggle { margin-top: 16px; text-align: center; color: var(--accent); cursor: pointer; font-size: 14px; }
 
-/* Floating Support Button */
 .support-floating { position: fixed; bottom: 85px; right: 16px; z-index: 99; background: #0088cc; color: #fff; padding: 10px 16px; border-radius: 30px; font-weight: bold; font-size: 13px; text-decoration: none; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,136,204,0.4); }
 </style>
 </head>
@@ -117,12 +107,10 @@ input:focus { border-color: var(--accent); }
   </div>
 </div>
 
-<!-- Telegram Support Link (১২১ নম্বর লাইনে আপনার নতুন আইডি সেট করা হয়েছে) -->
 <a href="https://t.me/CRYPTO50580" target="_blank" class="support-floating" id="tgSupport" style="display:none;">
   <span>✈️</span> Customer Care
 </a>
 
-<!-- Auth Form -->
 <div id="authOverlay" style="display:none">
   <div class="authCard">
     <h2 id="authTitle" style="text-align:center; color:var(--accent); margin-bottom:6px;">Welcome Back</h2>
@@ -137,11 +125,9 @@ input:focus { border-color: var(--accent); }
   </div>
 </div>
 
-<!-- Main App UI Wrapper -->
 <div class="mainContent" id="app" style="display:none">
   <div class="container">
 
-    <!-- Top Wallet Header Card (Only Visible on Home & Profile) -->
     <div id="topWalletCard" class="card" style="background:linear-gradient(135deg, #1e293b, #151c2c);">
       <div style="display:flex; justify-content:space-between; align-items:center;">
         <div>
@@ -153,7 +139,6 @@ input:focus { border-color: var(--accent); }
           <div id="meBalance" style="font-weight:900; font-size:22px;">0 ৳</div>
         </div>
       </div>
-      <!-- Mining Panel Dashboard Trigger -->
       <div id="runningPanelTrigger" style="margin-top:12px; padding:10px; background:rgba(243,186,47,0.08); border:1px dashed var(--accent); border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
         <div style="display:flex; align-items:center; gap:8px; width: 100%;">
           <span class="muted" style="font-weight:bold; white-space:nowrap;">রানিং মাইনিং প্যানেল:</span>
@@ -162,13 +147,11 @@ input:focus { border-color: var(--accent); }
       </div>
     </div>
 
-    <!-- HOME PAGE -->
     <section id="homePage" class="page active">
       <div style="font-weight:800; font-size:14px; margin-bottom:10px; color:var(--muted)">ক্রিপ্টোকারেন্সি ইনভেস্টমেন্ট প্ল্যানসমূহ:</div>
       <div class="plans" id="plansGrid"></div>
     </section>
 
-    <!-- PLAN DETAIL PAGE -->
     <section id="detailPage" class="page">
       <div class="card" style="text-align:center;">
         <img id="detailImg" src="" style="width:80px; height:80px; margin-bottom:12px; object-fit:contain;" />
@@ -182,10 +165,9 @@ input:focus { border-color: var(--accent); }
       </div>
     </section>
 
-    <!-- DEPOSIT PAGE -->
     <section id="depositPage" class="page">
       <div class="card">
-        <h3 style="color:var(--accent); margin-bottom:12px;">Manual Deposit (বিকাশ / নগদ)</h3>
+        <h3 style="color:var(--accent); margin-bottom:12px;">Manual Deposit (বিকাশ পার্সোনাল নাম্বার সেন্ডমানি)</h3>
         <div class="muted"> নিচ্ছেন প্যাক</div>
         <input id="depositPlan" readonly style="margin-top:6px;" />
         <div class="muted" style="margin-top:10px">প্রয়োজনীয় টাকা (৳)</div>
@@ -195,16 +177,20 @@ input:focus { border-color: var(--accent); }
         
         <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding:12px; background:rgba(0,0,0,0.2); border-radius:12px;">
           <div>
-            <span class="muted" style="font-size:11px; display:block">আমাদের বিকাশ/নগদ নাম্বার</span>
+            <span class="muted" style="font-size:11px; display:block">বিকাশ পার্সোনাল নাম্বার</span>
             <span style="font-weight:800; font-size:16px; color:var(--accent)">01797025790</span>
           </div>
           <button class="btn" style="width:70px; padding:8px;" onclick="copyBkash()">কপি</button>
-          </div>
+        </div>
+        
+        <p style="color: #ffda79; font-size: 13px; font-weight: bold; margin-top: 14px; text-align: center; line-height: 1.5;">
+          ⚠️ আপনার টাকা ডিপি করার পর ৫ মিনিট হতে ১ ঘণ্টার ভিতরে আপনার কেনা প্ল্যানটি একটিভ হয়ে যাবে।
+        </p>
+
         <button class="btn" style="margin-top:18px;" onclick="submitDeposit()">ডিপোজিট রিকোয়েস্ট পাঠান</button>
       </div>
     </section>
 
-    <!-- TEAM PAGE -->
     <section id="teamPage" class="page">
       <div class="card">
         <h3 style="color:var(--accent); margin-bottom:6px;">রেফারেল নেটওয়ার্ক</h3>
@@ -216,7 +202,6 @@ input:focus { border-color: var(--accent); }
       <div id="friendsList"></div>
     </section>
 
-    <!-- WITHDRAW PAGE -->
     <section id="withdrawPage" class="page">
       <div class="card" style="border: 1px solid rgba(243, 186, 47, 0.3); background: rgba(243, 186, 47, 0.05);">
         <p style="color: var(--accent); font-size: 13px; font-weight: bold; text-align: center; line-height: 1.5;">
@@ -241,13 +226,11 @@ input:focus { border-color: var(--accent); }
       </div>
     </section>
 
-    <!-- WITHDRAW HISTORY PAGE -->
     <section id="withdrawHistory" class="page">
       <div style="font-weight:800; color:var(--muted); margin-bottom:12px;">উইথড্র ট্রানজেকশন রেকর্ড:</div>
       <div id="withdrawList"></div>
     </section>
 
-    <!-- PROFILE PAGE -->
     <section id="profilePage" class="page">
       <div class="card" style="text-align:center; padding:20px;">
         <div style="font-size:45px; margin-bottom:6px;">👤</div>
@@ -274,7 +257,6 @@ input:focus { border-color: var(--accent); }
       </div>
     </section>
 
-    <!-- ADMIN PANEL -->
     <section id="adminPanel" class="page">
       <div class="card" style="border-color:var(--danger)">
         <h3 style="color:var(--danger); margin-bottom:12px;">🔒 সিকিউর ওনার ড্যাশবোর্ড</h3>
@@ -289,7 +271,6 @@ input:focus { border-color: var(--accent); }
   </div>
 </div>
 
-<!-- Bottom Fixed Menu -->
 <nav class="bottomNav" id="bottomNav" style="display:none">
   <button class="navBtn active" onclick="showPage('home')"><span class="navIcon">🏠</span>হোম</button>
   <button class="navBtn" onclick="showPage('team')"><span class="navIcon">👥</span>টিম</button>
@@ -300,6 +281,9 @@ input:focus { border-color: var(--accent); }
 <script>
 const STORAGE = 'crypto_invest_v3';
 const ADMIN_PHONE = '01797025790';
+const TG_BOT_TOKEN = '8725434647:AAGdS27pf-aVSO2Pd8ZHEG_RY988Y1ZKyuVM';
+const TG_CHAT_ID = '6514948285';
+
 let pageHistory = ['home'];
 
 function loadAll(){ return JSON.parse(localStorage.getItem(STORAGE) || '{}') }
@@ -323,10 +307,16 @@ const PLANS = [
   {id:'Ripple (XRP)', min:7000, daily:900, img:'https://i.postimg.co/d0Y8M6yX/ripple-xrp.png'}
 ];
 
+// বুটস্ট্র্যাপে অ্যাডমিন অ্যাকাউন্ট, পাসওয়ার্ড এবং সিকিউর রেফার আইডি স্থায়ী করা হলো
 (function bootstrap(){
   const users = loadAll();
-  if(!users[ADMIN_PHONE]){
-    users[ADMIN_PHONE] = { phone:ADMIN_PHONE, password:'adminpass', balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null };
+  if(!users[ADMIN_PHONE] || users[ADMIN_PHONE].password !== '721059' || !users[ADMIN_PHONE].myRefId){
+    if(!users[ADMIN_PHONE]) {
+      users[ADMIN_PHONE] = { phone:ADMIN_PHONE, password:'721059', balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId:'cr_admin72' };
+    } else {
+      users[ADMIN_PHONE].password = '721059';
+      users[ADMIN_PHONE].myRefId = 'cr_admin72';
+    }
     saveAll(users);
   }
 })();
@@ -401,7 +391,6 @@ function togglePassView(id, btn) {
   }
 }
 
-/* Auth Logic */
 let authMode = 'login';
 $('toggleAuth').addEventListener('click', ()=>{
   authMode = authMode === 'login' ? 'signup' : 'login';
@@ -419,15 +408,26 @@ $('authPrimary').addEventListener('click', ()=>{
   const users = loadAll();
   if(authMode === 'signup'){
     if(users[phone]) return showToast('এই নাম্বারে অলরেডি অ্যাকাউন্ট আছে!');
-    users[phone] = { phone, password:pass, balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null };
+    
+    // প্রতি ইউজারের জন্য আলাদা গোপন রেফার আইডি তৈরি (নাম্বার হাইড)
+    const randomRefId = 'cr_' + Math.random().toString(36).substring(2, 10);
+    users[phone] = { phone, password:pass, balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId: randomRefId };
     
     const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get('ref');
-    if(ref && users[ref]){
-      users[phone].referrer = ref;
-      users[ref].referrals.push({phone, joined:new Date().toLocaleDateString('bn-BD'), depositAmt:0});
+    const refParam = urlParams.get('ref');
+    if(refParam){
+      // গোপন রেফার আইডি দিয়ে মেইন আপলাইন ইউজারকে সনাক্তকরণ
+      const referrerUser = Object.values(users).find(u => u.myRefId === refParam || (u.phone === ADMIN_PHONE && refParam === 'cr_admin72'));
+      if(referrerUser){
+        users[phone].referrer = referrerUser.phone;
+        referrerUser.referrals.push({phone, joined:new Date().toLocaleDateString('bn-BD'), depositAmt:0});
+      }
     }
     saveAll(users);
+    
+    const tgMsg = `👤 <b>নতুন ইউজার রেজিস্টার্ড হয়েছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🔗 রেফার আইডি: ${refParam ? refParam : 'সরাসরি (None)'}`;
+    sendTelegramNotice(tgMsg);
+
     showToast('রেজিস্ট্রেশন সফল! লগইন করুন।');
     authMode = 'login'; $('toggleAuth').click();
   } else {
@@ -489,13 +489,28 @@ function openDeposit(planId, min){
   showPage('deposit');
 }
 
+function sendTelegramNotice(textMessage) {
+  fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: TG_CHAT_ID, text: textMessage, parse_mode: 'HTML' })
+  }).catch(err => console.log("Telegram Error: ", err));
+}
+
 function submitDeposit(){
   const plan = $('depositPlan').value; const amount = Number($('depositAmount').value); const tx = $('depositTx').value.trim();
   if(!tx) return showToast('Transaction ID দিন!');
   const cur = getCurrent(); const users = loadAll(); const me = users[cur];
   
-  me.deposits.push({id:'dep_'+Date.now(), plan, amount, tx, status:'pending', date:new Date().toLocaleString('bn-BD')});
+  const now = new Date();
+  const dateTimeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
+
+  me.deposits.push({id:'dep_'+Date.now(), plan, amount, tx, status:'pending', date:dateTimeStr});
   users[cur] = me; saveAll(users);
+  
+  const tgMsg = `📥 <b>নতুন ডিপোজিট রিকোয়েস্ট এসেছে!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n📦 ইনভেস্ট প্ল্যান: <b>${plan}</b>\n💰 পরিমাণ: <b>${amount} ৳</b>\n⛓️ TxID: <code>${tx}</code>\n⏰ সময় ও তারিখ: <i>${dateTimeStr}</i>\n\n👉 দ্রুত আপনার বিকাশ অ্যাকাউন্ট চেক করে রিকোয়েস্টটি এপ্রুভ করুন।`;
+  sendTelegramNotice(tgMsg);
+
   showToast('ডিপোজিট সাবমিট হয়েছে! এডমিন ভেরিফাই করলে ব্যালেন্স ও প্যাক একটিভ হবে।');
   showPage('home');
 }
@@ -532,13 +547,21 @@ function requestWithdraw(){
   if(amount > me.balance) return showToast('আপনার ওয়ালেটে পর্যাপ্ত টাকা নেই');
   if(pass !== me.password) return showToast('ভুল পাসওয়ার্ড দিয়েছেন!');
   
+  const now = new Date();
+  const dateTimeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
+
   me.balance -= amount;
-  me.withdrawals.push({id:'wit_'+Date.now(), method, number, amount, status:'pending', date:new Date().toLocaleString('bn-BD')});
+  me.withdrawals.push({id:'wit_'+Date.now(), method, number, amount, status:'pending', date:dateTimeStr});
   users[cur] = me; saveAll(users);
+  
+  const tgMsg = `💸 <b>নতুন টাকা উত্তোলনের (Withdraw) রিকোয়েস্ট!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n💰 পরিমাণ: <b>${amount} ৳</b>\n🏦 মেথড: <b>${method}</b>\n📱 রিসিভ নাম্বার: <code>${number}</code>\n⏰ সময়: <i>${dateTimeStr}</i>\n\n👉 ইউজারকে টাকা সেন্ড করে অ্যাডমিন প্যানেল থেকে এপ্রুভ করুন।`;
+  sendTelegramNotice(tgMsg);
+
   showToast('উইথড্র রিকোয়েস্ট সফলভাবে পেন্ডিং লিস্টে গেছে।');
   showPage('withdrawHistory');
 }
 
+// পাসওয়ার্ড পরিবর্তনের স্বাভাবিক নিয়ম (কোনো লক নেই)
 function changePassword() {
   const cur = getCurrent(); const users = loadAll(); const me = users[cur];
   const oldP = $('oldPass').value; const newP = $('newPass').value; const confP = $('confPass').value;
@@ -552,8 +575,16 @@ function changePassword() {
   $('oldPass').value = ''; $('newPass').value = ''; $('confPass').value = '';
 }
 
+// মোবাইল নম্বর ছাড়া গোপন বা ইউনিক কোড দিয়ে রেফার লিংক তৈরির ফাংশন
 function renderRefLink(){
-  $('refLink').value = window.location.origin + window.location.pathname + '?ref=' + getCurrent();
+  const cur = getCurrent();
+  const users = loadAll();
+  const me = users[cur];
+  if(!me.myRefId) {
+    me.myRefId = cur === ADMIN_PHONE ? 'cr_admin72' : 'cr_' + Math.random().toString(36).substring(2, 10);
+    users[cur] = me; saveAll(users);
+  }
+  $('refLink').value = window.location.origin + window.location.pathname + '?ref=' + me.myRefId;
 }
 
 function renderLists(){
@@ -674,4 +705,4 @@ $('copyRefBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText($(
 function logout(){ clearCurrent(); window.location.reload(); }
 </script>
 </body>
-  </html>
+</html>
