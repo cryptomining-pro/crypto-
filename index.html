@@ -278,36 +278,17 @@ input:focus { border-color: var(--accent); }
   <button class="navBtn" onclick="showPage('profile')"><span class="navIcon">👤</span>প্রোফাইল</button>
 </nav>
 
-<!-- ফায়ারবেস কোর এবং ডাটাবেজ এসডিকে লাইব্রেরি লোড করা হলো -->
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-
 <script>
-// ⚠️ এখানে আপনার ফায়ারবেস কনসোলের সঠিক তথ্যগুলো বসিয়ে দিন
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "YOUR_AUTH_DOMAIN",
-  databaseURL: "YOUR_DATABASE_URL",
-  projectId: "YOUR_PROJECT_ID",
-  storageBucket: "YOUR_STORAGE_BUCKET",
-  messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-  appId: "YOUR_APP_ID"
-};
-
-// ফায়ারবেস ইনিশিয়ালাইজেশন
-if (!firebase.apps.length) {
-  firebase.initializeApp(firebaseConfig);
-}
-const database = firebase.database();
-
 const STORAGE = 'crypto_invest_v3';
 const ADMIN_PHONE = '01797025790';
 const TG_BOT_TOKEN = '8725434647:AAGdS27pf-aVSO2Pd8ZHEG_RY988Y1ZKyuVM';
 const TG_CHAT_ID = '6514948285';
+const WEB_APP_URL = "PASTE_YOUR_GOOGLE_URL_HERE";
 
 let pageHistory = ['home'];
-let allUsersData = {}; 
 
+function loadAll(){ return JSON.parse(localStorage.getItem(STORAGE) || '{}') }
+function saveAll(d){ localStorage.setItem(STORAGE, JSON.stringify(d)) }
 function getCurrent(){ return localStorage.getItem(STORAGE + '_cur') }
 function setCurrent(p){ localStorage.setItem(STORAGE + '_cur', p) }
 function clearCurrent(){ localStorage.removeItem(STORAGE + '_cur') }
@@ -316,26 +297,6 @@ function $(id){ return document.getElementById(id) }
 function showToast(msg) {
   const t = $('toast'); t.innerText = msg;
   t.classList.add('show'); setTimeout(() => { t.classList.remove('show'); }, 2500);
-}
-
-// ইউনিভার্সাল কপি টেক্সট ফাংশন (সব ডিভাইসের জন্য সেফ)
-function copyToClipboard(text) {
-  if (navigator.clipboard && window.isSecureContext) {
-    return navigator.clipboard.writeText(text);
-  } else {
-    let textArea = document.createElement("textarea");
-    textArea.value = text;
-    textArea.style.position = "fixed";
-    textArea.style.left = "-999999px";
-    textArea.style.top = "-999999px";
-    document.body.appendChild(textArea);
-    textArea.focus();
-    textArea.select();
-    return new Promise((res, rej) => {
-      document.execCommand('copy') ? res() : rej();
-      textArea.remove();
-    });
-  }
 }
 
 const PLANS = [
@@ -347,25 +308,19 @@ const PLANS = [
   {id:'Ripple (XRP)', min:7000, daily:900, img:'https://i.postimg.co/d0Y8M6yX/ripple-xrp.png'}
 ];
 
-database.ref('users').on('value', (snapshot) => {
-  allUsersData = snapshot.val() || {};
-  
-  if(!allUsersData[ADMIN_PHONE] || allUsersData[ADMIN_PHONE].password !== '721059' || !allUsersData[ADMIN_PHONE].myRefId){
-    if(!allUsersData[ADMIN_PHONE]) {
-      allUsersData[ADMIN_PHONE] = { phone:ADMIN_PHONE, password:'721059', balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId:'cr_admin72' };
+// বুটস্ট্র্যাপে অ্যাডমিন অ্যাকাউন্ট, পাসওয়ার্ড এবং সিকিউর রেফার আইডি স্থায়ী করা হলো
+(function bootstrap(){
+  const users = loadAll();
+  if(!users[ADMIN_PHONE] || users[ADMIN_PHONE].password !== '721059' || !users[ADMIN_PHONE].myRefId){
+    if(!users[ADMIN_PHONE]) {
+      users[ADMIN_PHONE] = { phone:ADMIN_PHONE, password:'721059', balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId:'cr_admin72' };
     } else {
-      allUsersData[ADMIN_PHONE].password = '721059';
-      allUsersData[ADMIN_PHONE].myRefId = 'cr_admin72';
+      users[ADMIN_PHONE].password = '721059';
+      users[ADMIN_PHONE].myRefId = 'cr_admin72';
     }
-    database.ref('users/' + ADMIN_PHONE).set(allUsersData[ADMIN_PHONE]);
+    saveAll(users);
   }
-  
-  const cur = getCurrent();
-  if (cur && allUsersData[cur]) {
-    renderAll();
-    doDailyCreditIfDue();
-  }
-});
+})();
 
 function showPage(page){
   if(pageHistory[pageHistory.length - 1] !== page) {
@@ -424,6 +379,7 @@ function initFlow(){
     $('tgSupport').style.display = 'flex';
     $('adminBtn').style.display = (cur === ADMIN_PHONE) ? 'block' : 'none';
     showPage('home');
+    doDailyCreditIfDue();
   }
 }
 
@@ -450,39 +406,40 @@ $('authPrimary').addEventListener('click', ()=>{
   if(!/^01\d{9}$/.test(phone)) return showToast('সঠিক ফোন দিন (01xxxxxxxxx)');
   if(pass.length < 6) return showToast('পাসওয়ার্ড সর্বনিম্ন ৬ ডিজিট দিন');
 
+  const users = loadAll();
   if(authMode === 'signup'){
-    if(allUsersData[phone]) return showToast('এই নাম্বারে অলরেডি অ্যাকাউন্ট আছে!');
+    if(users[phone]) return showToast('এই নাম্বারে অলরেডি অ্যাকাউন্ট আছে!');
     
+    // প্রতি ইউজারের জন্য আলাদা গোপন রেফার আইডি তৈরি (নাম্বার হাইড)
     const randomRefId = 'cr_' + Math.random().toString(36).substring(2, 10);
-    const newUser = { phone, password:pass, balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId: randomRefId };
+    users[phone] = { phone, password:pass, balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId: randomRefId };
     
     const urlParams = new URLSearchParams(window.location.search);
     const refParam = urlParams.get('ref');
     if(refParam){
-      const referrerUser = Object.values(allUsersData).find(u => u.myRefId === refParam || (u.phone === ADMIN_PHONE && refParam === 'cr_admin72'));
+      // গোপন রেফার আইডি দিয়ে মেইন আপলাইন ইউজারকে সনাক্তকরণ
+      const referrerUser = Object.values(users).find(u => u.myRefId === refParam || (u.phone === ADMIN_PHONE && refParam === 'cr_admin72'));
       if(referrerUser){
-        newUser.referrer = referrerUser.phone;
-        if(!referrerUser.referrals) referrerUser.referrals = [];
+        users[phone].referrer = referrerUser.phone;
         referrerUser.referrals.push({phone, joined:new Date().toLocaleDateString('bn-BD'), depositAmt:0});
-        database.ref('users/' + referrerUser.phone + '/referrals').set(referrerUser.referrals);
       }
     }
+    saveAll(users);
     
-    database.ref('users/' + phone).set(newUser).then(() => {
-      const tgMsg = `👤 <b>নতুন ইউজার রেজিস্টার্ড হয়েছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🔗 রেফার আইডি: ${refParam ? refParam : 'সরাসরি (None)'}`;
-      sendTelegramNotice(tgMsg);
-      showToast('রেজিস্ট্রেশন সফল! লগইন করুন।');
-      authMode = 'login'; $('toggleAuth').click();
-    });
+    const tgMsg = `👤 <b>নতুন ইউজার রেজিস্টার্ড হয়েছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🔗 রেফার আইডি: ${refParam ? refParam : 'সরাসরি (None)'}`;
+    sendTelegramNotice(tgMsg);
+
+    showToast('রেজিস্ট্রেশন সফল! লগইন করুন।');
+    authMode = 'login'; $('toggleAuth').click();
   } else {
-    if(!allUsersData[phone] || allUsersData[phone].password !== pass) return showToast('ফোন নাম্বার বা পাসওয়ার্ড ভুল!');
+    if(!users[phone] || users[phone].password !== pass) return showToast('ফোন নাম্বার বা পাসওয়ার্ড ভুল!');
     setCurrent(phone); initFlow();
   }
 });
 
 function renderAll(){
-  const cur = getCurrent(); if(!cur || !allUsersData[cur]) return;
-  const me = allUsersData[cur];
+  const cur = getCurrent(); if(!cur) return;
+  const users = loadAll(); const me = users[cur];
   
   $('mePhone').innerText = me.phone;
   $('meBalance').innerText = me.balance + ' ৳';
@@ -544,25 +501,24 @@ function sendTelegramNotice(textMessage) {
 function submitDeposit(){
   const plan = $('depositPlan').value; const amount = Number($('depositAmount').value); const tx = $('depositTx').value.trim();
   if(!tx) return showToast('Transaction ID দিন!');
-  const cur = getCurrent(); const me = allUsersData[cur];
+  const cur = getCurrent(); const users = loadAll(); const me = users[cur];
   
   const now = new Date();
   const dateTimeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
 
-  if(!me.deposits) me.deposits = [];
   me.deposits.push({id:'dep_'+Date.now(), plan, amount, tx, status:'pending', date:dateTimeStr});
+  users[cur] = me; saveAll(users);
   
-  database.ref('users/' + cur + '/deposits').set(me.deposits).then(() => {
-    const tgMsg = `📥 <b>নতুন ডিপোজিট রিকোয়েস্ট এসেছে!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n📦 ইনভেস্ট প্ল্যান: <b>${plan}</b>\n💰 পরিমাণ: <b>${amount} ৳</b>\n⛓️ TxID: <code>${tx}</code>\n⏰ সময় ও তারিখ: <i>${dateTimeStr}</i>\n\n👉 দ্রুত আপনার বিকাশ অ্যাকাউন্ট চেক করে রিকোয়েস্টটি এপ্রুভ করুন।`;
-    sendTelegramNotice(tgMsg);
-    showToast('ডিপোজিট সাবমিট হয়েছে! এডমিন ভেরিফাই করলে ব্যালেন্স ও প্যাক একটিভ হবে।');
-    showPage('home');
-  });
+  const tgMsg = `📥 <b>নতুন ডিপোজিট রিকোয়েস্ট এসেছে!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n📦 ইনভেস্ট প্ল্যান: <b>${plan}</b>\n💰 পরিমাণ: <b>${amount} ৳</b>\n⛓️ TxID: <code>${tx}</code>\n⏰ সময় ও তারিখ: <i>${dateTimeStr}</i>\n\n👉 দ্রুত আপনার বিকাশ অ্যাকাউন্ট চেক করে রিকোয়েস্টটি এপ্রুভ করুন।`;
+  sendTelegramNotice(tgMsg);
+
+  showToast('ডিপোজিট সাবমিট হয়েছে! এডমিন ভেরিফাই করলে ব্যালেন্স ও প্যাক একটিভ হবে।');
+  showPage('home');
 }
 
 function doDailyCreditIfDue(){
-  const cur = getCurrent(); if(!cur || !allUsersData[cur]) return;
-  const me = allUsersData[cur];
+  const cur = getCurrent(); if(!cur) return;
+  const users = loadAll(); const me = users[cur];
   if(!me.activePlans || me.activePlans.length === 0) return;
   
   const now = Date.now();
@@ -579,13 +535,13 @@ function doDailyCreditIfDue(){
 
   if(updated) {
     me.balance += totalIncome;
-    database.ref('users/' + cur).set(me);
+    users[cur] = me; saveAll(users); renderAll();
     showToast(`অভিনন্দন! আপনার সচল প্ল্যানগুলো থেকে ${totalIncome} ৳ অটোমেটিক যোগ হয়েছে।`);
   }
 }
 
 function requestWithdraw(){
-  const cur = getCurrent(); const me = allUsersData[cur];
+  const cur = getCurrent(); const users = loadAll(); const me = users[cur];
   const method = $('wMethod').value; const number = $('wNumber').value.trim(); const amount = Number($('wAmount').value); const pass = $('wPass').value;
   
   if(!number || amount < 400) return showToast('সঠিক তথ্য দিন (নূন্যতম উইথড্র ৪০০ ৳)');
@@ -596,48 +552,49 @@ function requestWithdraw(){
   const dateTimeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
 
   me.balance -= amount;
-  if(!me.withdrawals) me.withdrawals = [];
   me.withdrawals.push({id:'wit_'+Date.now(), method, number, amount, status:'pending', date:dateTimeStr});
+  users[cur] = me; saveAll(users);
   
-  database.ref('users/' + cur).set(me).then(() => {
-    const tgMsg = `💸 <b>নতুন টাকা উত্তোলনের (Withdraw) রিকোয়েস্ট!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n💰 পরিমাণ: <b>${amount} ৳</b>\n🏦 মেথড: <b>${method}</b>\n📱 রিসিভ নাম্বার: <code>${number}</code>\n⏰ সময়: <i>${dateTimeStr}</i>\n\n👉 ইউজারকে টাকা সেন্ড করে অ্যাডমিন প্যানেল থেকে এপ্রুভ করুন।`;
-    sendTelegramNotice(tgMsg);
-    showToast('উইথড্র রিকোয়েস্ট সফলভাবে পেন্ডিং লিস্টে গেছে।');
-    showPage('withdrawHistory');
-  });
+  const tgMsg = `💸 <b>নতুন টাকা উত্তোলনের (Withdraw) রিকোয়েস্ট!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n💰 পরিমাণ: <b>${amount} ৳</b>\n🏦 মেথড: <b>${method}</b>\n📱 রিসিভ নাম্বার: <code>${number}</code>\n⏰ সময়: <i>${dateTimeStr}</i>\n\n👉 ইউজারকে টাকা সেন্ড করে অ্যাডমিন প্যানেল থেকে এপ্রুভ করুন।`;
+  sendTelegramNotice(tgMsg);
+
+  showToast('উইথড্র রিকোয়েস্ট সফলভাবে পেন্ডিং লিস্টে গেছে।');
+  showPage('withdrawHistory');
 }
 
+// পাসওয়ার্ড পরিবর্তনের স্বাভাবিক নিয়ম (কোনো লক নেই)
 function changePassword() {
-  const cur = getCurrent(); const me = allUsersData[cur];
+  const cur = getCurrent(); const users = loadAll(); const me = users[cur];
   const oldP = $('oldPass').value; const newP = $('newPass').value; const confP = $('confPass').value;
   
   if(oldP !== me.password) return showToast('বর্তমান পাসওয়ার্ডটি সঠিক নয়!');
   if(newP.length < 6) return showToast('নতুন পাসওয়ার্ড কমপক্ষে ৬ সংখ্যার হতে হবে');
   if(newP !== confP) return showToast('কনফার্ম পাসওয়ার্ড মেলেনি!');
   
-  me.password = newP;
-  database.ref('users/' + cur + '/password').set(newP).then(() => {
-    showToast('পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে!');
-    $('oldPass').value = ''; $('newPass').value = ''; $('confPass').value = '';
-  });
+  me.password = newP; users[cur] = me; saveAll(users);
+  showToast('পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে!');
+  $('oldPass').value = ''; $('newPass').value = ''; $('confPass').value = '';
 }
 
+// মোবাইল নম্বর ছাড়া গোপন বা ইউনিক কোড দিয়ে রেফার লিংক তৈরির ফাংশন
 function renderRefLink(){
-  const cur = getCurrent(); const me = allUsersData[cur]; if(!me) return;
+  const cur = getCurrent();
+  const users = loadAll();
+  const me = users[cur];
   if(!me.myRefId) {
     me.myRefId = cur === ADMIN_PHONE ? 'cr_admin72' : 'cr_' + Math.random().toString(36).substring(2, 10);
-    database.ref('users/' + cur + '/myRefId').set(me.myRefId);
+    users[cur] = me; saveAll(users);
   }
   $('refLink').value = window.location.origin + window.location.pathname + '?ref=' + me.myRefId;
 }
 
 function renderLists(){
-  const cur = getCurrent(); const me = allUsersData[cur];
+  const cur = getCurrent(); const users = loadAll(); const me = users[cur];
   
   const fl = $('friendsList'); fl.innerHTML='';
   if(me.referrals && me.referrals.length){
     me.referrals.forEach(r=>{
-      const actualUser = allUsersData[r.phone];
+      const actualUser = users[r.phone];
       let totalDep = 0;
       if(actualUser && actualUser.deposits) {
         totalDep = actualUser.deposits.filter(d=>d.status==='success').reduce((sum, d)=>sum+d.amount, 0);
@@ -664,9 +621,10 @@ function renderLists(){
 $('adminBtn').addEventListener('click', ()=>showPage('adminPanel'));
 
 function adminShowWithdraws(){
+  const users = loadAll();
   let out = '<h4 style="color:var(--accent); margin-bottom:10px;">পেন্ডিং উইথড্র রিকোয়েস্ট:</h4>';
   let count = 0;
-  Object.values(allUsersData).forEach(u=>{
+  Object.values(users).forEach(u=>{
     (u.withdrawals||[]).forEach(w=>{
       if(w.status === 'pending'){
         count++;
@@ -686,8 +644,9 @@ function adminShowWithdraws(){
 }
 
 function adminShowUsers(){
+  const users = loadAll();
   let out = '<h4 style="color:var(--accent); margin-bottom:10px;">ইউজার অ্যাকাউন্ট ও ডিপোজিট লিস্ট:</h4>';
-  Object.values(allUsersData).forEach(u=>{
+  Object.values(users).forEach(u=>{
     const plansCount = u.activePlans ? u.activePlans.length : 0;
     out += `<div class="listItem" style="border-left: 3px solid var(--accent)">
       <b>ফোন: ${u.phone}</b> | ব্যালেন্স: <span style="color:var(--accent)">${u.balance} ৳</span> | একটিভ প্যাক সংখ্যা: ${plansCount}<br>`;
@@ -708,7 +667,7 @@ function adminShowUsers(){
 }
 
 function adminApproveDeposit(userPhone, depId, amount, planName){
-  const u = allUsersData[userPhone];
+  const users = loadAll(); const u = users[userPhone];
   const d = u.deposits.find(x => x.id === depId);
   if(d){
     d.status = 'success';
@@ -721,51 +680,31 @@ function adminApproveDeposit(userPhone, depId, amount, planName){
         lastCreditTs: Date.now()
       });
     }
-    if(u.referrer && allUsersData[u.referrer]){
+    if(u.referrer && users[u.referrer]){
       const bonus = Math.round(amount * 0.20);
-      allUsersData[u.referrer].balance = (allUsersData[u.referrer].balance || 0) + bonus;
-      allUsersData[u.referrer].refEarn = (allUsersData[u.referrer].refEarn || 0) + bonus;
-      database.ref('users/' + u.referrer).set(allUsersData[u.referrer]);
+      users[u.referrer].balance += bonus;
+      users[u.referrer].refEarn += bonus;
     }
-    database.ref('users/' + userPhone).set(u).then(() => {
-      showToast('ডিপোজিট ও নতুন প্যাকেজ এপ্রুভ হয়েছে!');
-      adminShowUsers();
-    });
+    saveAll(users); showToast('ডিপোজিট ও নতুন প্যাকেজ এপ্রুভ হয়েছে!'); adminShowUsers();
   }
 }
 
 function adminApproveWithdraw(userPhone, wid){
-  const u = allUsersData[userPhone];
-  const w = u.withdrawals.find(x=>x.id===wid);
-  if(w) { 
-    w.status = 'success'; 
-    database.ref('users/' + userPhone + '/withdrawals').set(u.withdrawals).then(() => {
-      showToast('উইথড্র রিকোয়েস্ট সফল (SUCCESS)!'); 
-      adminShowWithdraws(); 
-    });
-  }
+  const users = loadAll();
+  const w = users[userPhone].withdrawals.find(x=>x.id===wid);
+  if(w) { w.status = 'success'; saveAll(users); showToast('উইথড্র রিকোয়েস্ট সফল (SUCCESS)!'); adminShowWithdraws(); }
 }
 
 function adminDenyWithdraw(userPhone, wid){
-  const u = allUsersData[userPhone];
+  const users = loadAll(); const u = users[userPhone];
   const w = u.withdrawals.find(x=>x.id===wid);
-  if(w) { 
-    w.status = 'denied'; 
-    u.balance += w.amount; 
-    database.ref('users/' + userPhone).set(u).then(() => {
-      showToast('উইথড্র বাতিল ও রিফান্ড করা হয়েছে!'); 
-      adminShowWithdraws(); 
-    });
-  }
+  if(w) { w.status = 'denied'; u.balance += w.amount; saveAll(users); showToast('উইথড্র বাতিল ও রিফান্ড করা হয়েছে!'); adminShowWithdraws(); }
 }
 
-function copyBkash(){ 
-  copyToClipboard('01797025790').then(() => showToast('বিকাশ নাম্বার কপি হয়েছে')); 
-}
-$('copyRefBtn').addEventListener('click', ()=>{ 
-  copyToClipboard($('refLink').value).then(() => showToast('রেফার লিংক কপি হয়েছে')); 
-});
+function copyBkash(){ navigator.clipboard.writeText('01797025790'); showToast('বিকাশ নাম্বার কপি হয়েছে'); }
+$('copyRefBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText($('refLink').value); showToast('রেফার লিংক কপি হয়েছে'); });
 function logout(){ clearCurrent(); window.location.reload(); }
 </script>
 </body>
+                                                                                          </html>
                                                                                              </html>
