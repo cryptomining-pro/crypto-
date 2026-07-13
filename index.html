@@ -144,7 +144,7 @@ input:focus { border-color: var(--accent); }
           <div id="meBalance" style="font-weight:900; font-size:22px;">0 ৳</div>
         </div>
       </div>
-      <!-- এই বক্সে ক্লিক করলে রানিং মাইনিং পেজ ওপেন হবে -->
+      
       <div id="runningPanelTrigger" onclick="showPage('activePlans')" style="margin-top:12px; padding:10px; background:rgba(243,186,47,0.08); border:1px dashed var(--accent); border-radius:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
         <div style="display:flex; align-items:center; gap:8px; width: 100%;">
           <span class="muted" style="font-weight:bold; white-space:nowrap;">রানিং মাইনিং প্যানেল:</span>
@@ -158,7 +158,6 @@ input:focus { border-color: var(--accent); }
       <div class="plans" id="plansGrid"></div>
     </section>
 
-    <!-- নতুন পেজ: সচল মাইনিং প্ল্যানগুলোর তালিকা -->
     <section id="activePlansPage" class="page">
       <div style="font-weight:800; color:var(--muted); margin-bottom:12px;">আপনার সচল (Active) মাইনিং প্যানেলসমূহ:</div>
       <div id="activePlansList"></div>
@@ -313,7 +312,8 @@ let pageHistory = ['home'];
 
 function getCurrent(){ return localStorage.getItem(STORAGE + '_cur') }
 function setCurrent(p){ localStorage.setItem(STORAGE + '_cur', p) }
-function clearCurrent(){ removeItem(STORAGE + '_cur') }
+// এখানে ভুলটা ঠিক করা হলো: localStorage যুক্ত করা হয়েছে
+function clearCurrent(){ localStorage.removeItem(STORAGE + '_cur') }
 function $(id){ return document.getElementById(id) }
 
 function showToast(msg) {
@@ -355,7 +355,7 @@ function showPage(page){
   const map = {
     home: 'homePage', deposit:'depositPage', detail:'detailPage', team:'teamPage',
     withdraw:'withdrawPage', withdrawHistory:'withdrawHistory', profile:'profilePage', adminPanel:'adminPanel',
-    activePlans: 'activePlansPage' // নতুন ম্যাপ যুক্ত করা হয়েছে
+    activePlans: 'activePlansPage'
   };
   
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
@@ -422,7 +422,7 @@ $('authPrimary').addEventListener('click', async ()=>{
   const phone = $('authPhone').value.trim();
   const pass = $('authPass').value.trim();
   if(!/^01\d{9}$/.test(phone)) return showToast('সঠিক ফোন দিন (01xxxxxxxxx)');
-  if(pass.length < 6) return showToast('পাসওয়ার্ড সর্বনিম্ন ৬ ডিজিট দিন');
+  if(pass.length < 6) return showToast('পাসওয়ার্ড সর্বনিম্ন６ডিজিট দিন');
 
   const userRef = db.collection('users').doc(phone);
   const userDoc = await userRef.get();
@@ -664,11 +664,9 @@ async function renderLists(me){
     });
   } else wl.innerHTML = '<div class="muted">কোনো উইথড্র হিস্ট্রি রেকর্ড নেই</div>';
 
-  // --- নতুন যুক্ত করা ইউজার একটিভ প্ল্যান রেন্ডারিং সিস্টেম ---
   const apl = $('activePlansList'); apl.innerHTML = '';
   if(me.activePlans && me.activePlans.length) {
     me.activePlans.forEach(ap => {
-      // PLANS অ্যারে থেকে বর্তমান একটিভ প্ল্যানের ছবি ম্যাচ করানো হচ্ছে
       const matchedPlan = PLANS.find(p => p.id === ap.id);
       const imgSrc = matchedPlan ? matchedPlan.img : 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png';
       
@@ -823,7 +821,7 @@ async function adminDenyWithdraw(userPhone, wid){
 
 function copyBkash(){ navigator.clipboard.writeText('01797025790'); showToast('বিকাশ নাম্বার কপি হয়েছে'); }
 $('copyRefBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText($('refLink').value); showToast('রেফার লিংক কপি হয়েছে'); });
-function logout(){ clearCurrent(); window.location.reload(); }
+function logout(){ logout_process = clearCurrent(); window.location.reload(); }
 </script>
 </body>
-</html>
+  </html>
