@@ -312,7 +312,6 @@ let pageHistory = ['home'];
 
 function getCurrent(){ return localStorage.getItem(STORAGE + '_cur') }
 function setCurrent(p){ localStorage.setItem(STORAGE + '_cur', p) }
-// এখানে ভুলটা ঠিক করা হলো: localStorage যুক্ত করা হয়েছে
 function clearCurrent(){ localStorage.removeItem(STORAGE + '_cur') }
 function $(id){ return document.getElementById(id) }
 
@@ -622,8 +621,8 @@ async function renderRefLink(me){
     await db.collection('users').doc(cur).update({ myRefId: randomId });
     me.myRefId = randomId;
   }
+  // এখানে ৪MD (404 Error) ফিক্স করা হলো - ইউজারনেম ফোর্স না করে স্বয়ংক্রিয় লাইভ লিংক নেওয়া হচ্ছে
   let baseLink = window.location.origin + window.location.pathname;
-  baseLink = baseLink.replace('md-bayzid505806', 'criptomining');
   $('refLink').value = baseLink + '?ref=' + me.myRefId;
 }
 
@@ -824,4 +823,4 @@ $('copyRefBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText($(
 function logout(){ logout_process = clearCurrent(); window.location.reload(); }
 </script>
 </body>
-  </html>
+                                                                     </html>
