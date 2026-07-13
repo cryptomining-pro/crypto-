@@ -90,6 +90,10 @@ input:focus { border-color: var(--accent); }
 
 .support-floating { position: fixed; bottom: 85px; right: 16px; z-index: 99; background: #0088cc; color: #fff; padding: 10px 16px; border-radius: 30px; font-weight: bold; font-size: 13px; text-decoration: none; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,136,204,0.4); }
 </style>
+
+<!-- ফায়ারবেস স্ক্রিপ্ট -->
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
 
@@ -279,16 +283,28 @@ input:focus { border-color: var(--accent); }
 </nav>
 
 <script>
+// আপনার নিজস্ব ফায়ারবেস কনফিগারেশন সচল করা হলো
+const firebaseConfig = {
+  apiKey: "AIzaSyDYXPZym4P9WqcOK2ScbfIVr0Uym1c1CYo",
+  authDomain: "invest-app-a3076.firebaseapp.com",
+  projectId: "invest-app-a3076",
+  storageBucket: "invest-app-a3076.firebasestorage.app",
+  messagingSenderId: "429279178615",
+  appId: "1:429279178615:web:6c9e606e58f9f91a01bb72",
+  measurementId: "G-622E83Q85T"
+};
+
+// ফায়ারবেস ইনিশিয়ালাইজেশন
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
 const STORAGE = 'crypto_invest_v3';
 const ADMIN_PHONE = '01797025790';
 const TG_BOT_TOKEN = '8725434647:AAGdS27pf-aVSO2Pd8ZHEG_RY988Y1ZKyuVM';
 const TG_CHAT_ID = '6514948285';
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzXS6PisE3fY0d27IiwZZUBoMajjpjbyelXYECo6ISc98aPhBJ3bRBL-QpQVQMUCr22/exec"; // আপনার গুগল স্ক্রিপ্ট লিংক এখানে দিন
 
 let pageHistory = ['home'];
 
-function loadAll(){ return JSON.parse(localStorage.getItem(STORAGE) || '{}') }
-function saveAll(d){ localStorage.setItem(STORAGE, JSON.stringify(d)) }
 function getCurrent(){ return localStorage.getItem(STORAGE + '_cur') }
 function setCurrent(p){ localStorage.setItem(STORAGE + '_cur', p) }
 function clearCurrent(){ localStorage.removeItem(STORAGE + '_cur') }
@@ -297,20 +313,6 @@ function $(id){ return document.getElementById(id) }
 function showToast(msg) {
   const t = $('toast'); t.innerText = msg;
   t.classList.add('show'); setTimeout(() => { t.classList.remove('show'); }, 2500);
-}
-
-// টেলিগ্রাম নোটিশ পাঠানোর উন্নত ফাংশন
-function sendTelegramNotice(textMessage) {
-  const url = `https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage?chat_id=${TG_CHAT_ID}&text=${encodeURIComponent(textMessage)}&parse_mode=HTML`;
-  fetch(url).catch(err => console.log("Telegram Error: ", err));
-}
-
-// গুগল শিটে ডেটা পাঠানোর ফাংশন
-function sendToGoogleSheet(data) {
-  if(WEB_APP_URL && WEB_APP_URL !== "PASTE_YOUR_GOOGLE_URL_HERE") {
-    const url = `${WEB_APP_URL}?` + new URLSearchParams(data).toString();
-    fetch(url, { mode: 'no-cors' }).catch(e => console.log("Google Sheet Error: ", e));
-  }
 }
 
 const PLANS = [
@@ -322,18 +324,15 @@ const PLANS = [
   {id:'Ripple (XRP)', min:7000, daily:900, img:'https://i.postimg.co/d0Y8M6yX/ripple-xrp.png'}
 ];
 
-(function bootstrap(){
-  const users = loadAll();
-  if(!users[ADMIN_PHONE] || users[ADMIN_PHONE].password !== '721059' || !users[ADMIN_PHONE].myRefId){
-    if(!users[ADMIN_PHONE]) {
-      users[ADMIN_PHONE] = { phone:ADMIN_PHONE, password:'721059', balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId:'cr_admin72' };
-    } else {
-      users[ADMIN_PHONE].password = '721059';
-      users[ADMIN_PHONE].myRefId = 'cr_admin72';
-    }
-    saveAll(users);
+// এডমিন একাউন্ট বুটস্ট্র্যাপ ফায়ারবেসে চেক করা
+async function bootstrapAdmin(){
+  const docRef = db.collection('users').doc(ADMIN_PHONE);
+  const doc = await docRef.get();
+  if(!doc.exists){
+    await docRef.set({ phone:ADMIN_PHONE, password:'721059', balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId:'cr_admin72' });
   }
-})();
+}
+bootstrapAdmin();
 
 function showPage(page){
   if(pageHistory[pageHistory.length - 1] !== page) {
@@ -413,29 +412,36 @@ $('toggleAuth').addEventListener('click', ()=>{
   $('toggleAuth').innerText = authMode === 'login' ? 'নতুন অ্যাকাউন্ট খুলুন (Signup)' : 'অলরেডি অ্যাকাউন্ট আছে? Login';
 });
 
-$('authPrimary').addEventListener('click', ()=>{
+$('authPrimary').addEventListener('click', async ()=>{
   const phone = $('authPhone').value.trim();
   const pass = $('authPass').value.trim();
   if(!/^01\d{9}$/.test(phone)) return showToast('সঠিক ফোন দিন (01xxxxxxxxx)');
   if(pass.length < 6) return showToast('পাসওয়ার্ড সর্বনিম্ন ৬ ডিজিট দিন');
 
-  const users = loadAll();
+  const userRef = db.collection('users').doc(phone);
+  const userDoc = await userRef.get();
+
   if(authMode === 'signup'){
-    if(users[phone]) return showToast('এই নাম্বারে অলরেডি অ্যাকাউন্ট আছে!');
+    if(userDoc.exists) return showToast('এই নাম্বারে অলরেডি অ্যাকাউন্ট আছে!');
     
     const randomRefId = 'cr_' + Math.random().toString(36).substring(2, 10);
-    users[phone] = { phone, password:pass, balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId: randomRefId };
+    const newUser = { phone, password:pass, balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId: randomRefId };
     
     const urlParams = new URLSearchParams(window.location.search);
     const refParam = urlParams.get('ref');
     if(refParam){
-      const referrerUser = Object.values(users).find(u => u.myRefId === refParam || (u.phone === ADMIN_PHONE && refParam === 'cr_admin72'));
-      if(referrerUser){
-        users[phone].referrer = referrerUser.phone;
-        referrerUser.referrals.push({phone, joined:new Date().toLocaleDateString('bn-BD'), depositAmt:0});
+      const snapshot = await db.collection('users').where('myRefId', '==', refParam).get();
+      if(!snapshot.empty){
+        const referrerDoc = snapshot.docs[0];
+        newUser.referrer = referrerDoc.id;
+        
+        const refData = referrerDoc.data();
+        refData.referrals.push({phone, joined:new Date().toLocaleDateString('bn-BD'), depositAmt:0});
+        await db.collection('users').doc(referrerDoc.id).update({ referrals: refData.referrals });
       }
     }
-    saveAll(users);
+    
+    await userRef.set(newUser);
     
     const tgMsg = `👤 <b>নতুন ইউজার রেজিস্টার্ড হয়েছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🔗 রেফার আইডি: ${refParam ? refParam : 'সরাসরি (None)'}`;
     sendTelegramNotice(tgMsg);
@@ -443,14 +449,16 @@ $('authPrimary').addEventListener('click', ()=>{
     showToast('রেজিস্ট্রেশন সফল! লগইন করুন।');
     authMode = 'login'; $('toggleAuth').click();
   } else {
-    if(!users[phone] || users[phone].password !== pass) return showToast('ফোন নাম্বার বা পাসওয়ার্ড ভুল!');
+    if(!userDoc.exists || userDoc.data().password !== pass) return showToast('ফোন নাম্বার বা পাসওয়ার্ড ভুল!');
     setCurrent(phone); initFlow();
   }
 });
 
-function renderAll(){
+async function renderAll(){
   const cur = getCurrent(); if(!cur) return;
-  const users = loadAll(); const me = users[cur];
+  const userDoc = await db.collection('users').doc(cur).get();
+  if(!userDoc.exists) return;
+  const me = userDoc.data();
   
   $('mePhone').innerText = me.phone;
   $('meBalance').innerText = me.balance + ' ৳';
@@ -465,8 +473,8 @@ function renderAll(){
   }
   
   renderPlans();
-  renderRefLink();
-  renderLists();
+  renderRefLink(me);
+  renderLists(me);
 }
 
 function renderPlans(){
@@ -501,28 +509,41 @@ function openDeposit(planId, min){
   showPage('deposit');
 }
 
-function submitDeposit(){
+function sendTelegramNotice(textMessage) {
+  fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: TG_CHAT_ID, text: textMessage, parse_mode: 'HTML' })
+  }).catch(err => console.log("Telegram Error: ", err));
+}
+
+async function submitDeposit(){
   const plan = $('depositPlan').value; const amount = Number($('depositAmount').value); const tx = $('depositTx').value.trim();
   if(!tx) return showToast('Transaction ID দিন!');
-  const cur = getCurrent(); const users = loadAll(); const me = users[cur];
+  const cur = getCurrent();
   
   const now = new Date();
   const dateTimeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
 
+  const userRef = db.collection('users').doc(cur);
+  const userDoc = await userRef.get();
+  const me = userDoc.data();
+  
   me.deposits.push({id:'dep_'+Date.now(), plan, amount, tx, status:'pending', date:dateTimeStr});
-  users[cur] = me; saveAll(users);
+  await userRef.update({ deposits: me.deposits });
   
   const tgMsg = `📥 <b>নতুন ডিপোজিট রিকোয়েস্ট এসেছে!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n📦 ইনভেস্ট প্ল্যান: <b>${plan}</b>\n💰 পরিমাণ: <b>${amount} ৳</b>\n⛓️ TxID: <code>${tx}</code>\n⏰ সময় ও তারিখ: <i>${dateTimeStr}</i>\n\n👉 দ্রুত আপনার বিকাশ অ্যাকাউন্ট চেক করে রিকোয়েস্টটি এপ্রুভ করুন।`;
   sendTelegramNotice(tgMsg);
-  sendToGoogleSheet({type:'Deposit', phone:cur, amount:amount, tx:tx, plan:plan});
 
   showToast('ডিপোজিট সাবমিট হয়েছে! এডমিন ভেরিফাই করলে ব্যালেন্স ও প্যাক একটিভ হবে।');
   showPage('home');
 }
 
-function doDailyCreditIfDue(){
+async function doDailyCreditIfDue(){
   const cur = getCurrent(); if(!cur) return;
-  const users = loadAll(); const me = users[cur];
+  const userRef = db.collection('users').doc(cur);
+  const userDoc = await userRef.get();
+  const me = userDoc.data();
   if(!me.activePlans || me.activePlans.length === 0) return;
   
   const now = Date.now();
@@ -539,14 +560,19 @@ function doDailyCreditIfDue(){
 
   if(updated) {
     me.balance += totalIncome;
-    users[cur] = me; saveAll(users); renderAll();
+    await userRef.update({ balance: me.balance, activePlans: me.activePlans });
+    renderAll();
     showToast(`অভিনন্দন! আপনার সচল প্ল্যানগুলো থেকে ${totalIncome} ৳ অটোমেটিক যোগ হয়েছে।`);
   }
 }
 
-function requestWithdraw(){
-  const cur = getCurrent(); const users = loadAll(); const me = users[cur];
+async function requestWithdraw(){
+  const cur = getCurrent();
   const method = $('wMethod').value; const number = $('wNumber').value.trim(); const amount = Number($('wAmount').value); const pass = $('wPass').value;
+  
+  const userRef = db.collection('users').doc(cur);
+  const userDoc = await userRef.get();
+  const me = userDoc.data();
   
   if(!number || amount < 400) return showToast('সঠিক তথ্য দিন (নূন্যতম উইথড্র ৪০০ ৳)');
   if(amount > me.balance) return showToast('আপনার ওয়ালেটে পর্যাপ্ত টাকা নেই');
@@ -557,54 +583,57 @@ function requestWithdraw(){
 
   me.balance -= amount;
   me.withdrawals.push({id:'wit_'+Date.now(), method, number, amount, status:'pending', date:dateTimeStr});
-  users[cur] = me; saveAll(users);
+  await userRef.update({ balance: me.balance, withdrawals: me.withdrawals });
   
   const tgMsg = `💸 <b>নতুন টাকা উত্তোলনের (Withdraw) রিকোয়েস্ট!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n💰 পরিমাণ: <b>${amount} ৳</b>\n🏦 মেথড: <b>${method}</b>\n📱 রিসিভ নাম্বার: <code>${number}</code>\n⏰ সময়: <i>${dateTimeStr}</i>\n\n👉 ইউজারকে টাকা সেন্ড করে অ্যাডমিন প্যানেল থেকে এপ্রুভ করুন।`;
   sendTelegramNotice(tgMsg);
-  sendToGoogleSheet({type:'Withdraw', phone:cur, amount:amount, method:method, number:number});
 
   showToast('উইথড্র রিকোয়েস্ট সফলভাবে পেন্ডিং লিস্টে গেছে।');
   showPage('withdrawHistory');
 }
 
-function changePassword() {
-  const cur = getCurrent(); const users = loadAll(); const me = users[cur];
+async function changePassword() {
+  const cur = getCurrent();
   const oldP = $('oldPass').value; const newP = $('newPass').value; const confP = $('confPass').value;
+  
+  const userRef = db.collection('users').doc(cur);
+  const userDoc = await userRef.get();
+  const me = userDoc.data();
   
   if(oldP !== me.password) return showToast('বর্তমান পাসওয়ার্ডটি সঠিক নয়!');
   if(newP.length < 6) return showToast('নতুন পাসওয়ার্ড কমপক্ষে ৬ সংখ্যার হতে হবে');
   if(newP !== confP) return showToast('কনফার্ম পাসওয়ার্ড মেলেনি!');
   
-  me.password = newP; users[cur] = me; saveAll(users);
+  await userRef.update({ password: newP });
   showToast('পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে!');
   $('oldPass').value = ''; $('newPass').value = ''; $('confPass').value = '';
 }
 
-function renderRefLink(){
-  const cur = getCurrent(); const users = loadAll(); const me = users[cur];
+async function renderRefLink(me){
+  const cur = getCurrent();
   if(!me.myRefId) {
-    me.myRefId = cur === ADMIN_PHONE ? 'cr_admin72' : 'cr_' + Math.random().toString(36).substring(2, 10);
-    users[cur] = me; saveAll(users);
+    const randomId = cur === ADMIN_PHONE ? 'cr_admin72' : 'cr_' + Math.random().toString(36).substring(2, 10);
+    await db.collection('users').doc(cur).update({ myRefId: randomId });
+    me.myRefId = randomId;
   }
   $('refLink').value = window.location.origin + window.location.pathname + '?ref=' + me.myRefId;
 }
 
-function renderLists(){
-  const cur = getCurrent(); const users = loadAll(); const me = users[cur];
-  
+async function renderLists(me){
   const fl = $('friendsList'); fl.innerHTML='';
   if(me.referrals && me.referrals.length){
-    me.referrals.forEach(r=>{
-      const actualUser = users[r.phone];
+    for (const r of me.referrals) {
+      const actualUserDoc = await db.collection('users').doc(r.phone).get();
       let totalDep = 0;
-      if(actualUser && actualUser.deposits) {
-        totalDep = actualUser.deposits.filter(d=>d.status==='success').reduce((sum, d)=>sum+d.amount, 0);
+      if(actualUserDoc.exists) {
+        const actualUser = actualUserDoc.data();
+        totalDep = (actualUser.deposits || []).filter(d=>d.status==='success').reduce((sum, d)=>sum+d.amount, 0);
       }
       fl.innerHTML += `<div class="listItem">
         <b>ID: ${r.phone}</b> <span class="muted" style="float:right">জয়েন: ${r.joined}</span>
         <div style="margin-top:4px; color:var(--accent)">মোট ডিপোজিট করেছে: ${totalDep} ৳</div>
       </div>`;
-    });
+    }
   } else fl.innerHTML = '<div class="muted">কোনো রেফারেল টিম মেম্বার নেই</div>';
 
   const wl = $('withdrawList'); wl.innerHTML='';
@@ -621,11 +650,12 @@ function renderLists(){
 /* ==================== ADMIN SYSTEM CONTROL ==================== */
 $('adminBtn').addEventListener('click', ()=>showPage('adminPanel'));
 
-function adminShowWithdraws(){
-  const users = loadAll();
+async function adminShowWithdraws(){
+  const snapshot = await db.collection('users').get();
   let out = '<h4 style="color:var(--accent); margin-bottom:10px;">পেন্ডিং উইথড্র রিকোয়েস্ট:</h4>';
   let count = 0;
-  Object.values(users).forEach(u=>{
+  snapshot.forEach(doc => {
+    const u = doc.data();
     (u.withdrawals||[]).forEach(w=>{
       if(w.status === 'pending'){
         count++;
@@ -644,10 +674,11 @@ function adminShowWithdraws(){
   $('adminResult').innerHTML = out;
 }
 
-function adminShowUsers(){
-  const users = loadAll();
+async function adminShowUsers(){
+  const snapshot = await db.collection('users').get();
   let out = '<h4 style="color:var(--accent); margin-bottom:10px;">ইউজার অ্যাকাউন্ট ও ডিপোজিট লিস্ট:</h4>';
-  Object.values(users).forEach(u=>{
+  snapshot.forEach(doc => {
+    const u = doc.data();
     const plansCount = u.activePlans ? u.activePlans.length : 0;
     out += `<div class="listItem" style="border-left: 3px solid var(--accent)">
       <b>ফোন: ${u.phone}</b> | ব্যালেন্স: <span style="color:var(--accent)">${u.balance} ৳</span> | একটিভ প্যাক সংখ্যা: ${plansCount}<br>`;
@@ -667,8 +698,11 @@ function adminShowUsers(){
   $('adminResult').innerHTML = out;
 }
 
-function adminApproveDeposit(userPhone, depId, amount, planName){
-  const users = loadAll(); const u = users[userPhone];
+async function adminApproveDeposit(userPhone, depId, amount, planName){
+  const userRef = db.collection('users').doc(userPhone);
+  const userDoc = await userRef.get();
+  const u = userDoc.data();
+  
   const d = u.deposits.find(x => x.id === depId);
   if(d){
     d.status = 'success';
@@ -681,25 +715,49 @@ function adminApproveDeposit(userPhone, depId, amount, planName){
         lastCreditTs: Date.now()
       });
     }
-    if(u.referrer && users[u.referrer]){
-      const bonus = Math.round(amount * 0.20);
-      users[u.referrer].balance += bonus;
-      users[u.referrer].refEarn += bonus;
+    if(u.referrer){
+      const refRef = db.collection('users').doc(u.referrer);
+      const refDoc = await refRef.get();
+      if(refDoc.exists){
+        const refData = refDoc.data();
+        const bonus = Math.round(amount * 0.20);
+        await refRef.update({
+          balance: (refData.balance || 0) + bonus,
+          refEarn: (refData.refEarn || 0) + bonus
+        });
+      }
     }
-    saveAll(users); showToast('ডিপোজিট ও নতুন প্যাকেজ এপ্রুভ হয়েছে!'); adminShowUsers();
+    await userRef.update({ deposits: u.deposits, activePlans: u.activePlans });
+    showToast('ডিপোজিট ও নতুন প্যাকেজ এপ্রুভ হয়েছে!');
+    adminShowUsers();
   }
 }
 
-function adminApproveWithdraw(userPhone, wid){
-  const users = loadAll();
-  const w = users[userPhone].withdrawals.find(x=>x.id===wid);
-  if(w) { w.status = 'success'; saveAll(users); showToast('উইথড্র রিকোয়েস্ট সফল (SUCCESS)!'); adminShowWithdraws(); }
+async function adminApproveWithdraw(userPhone, wid){
+  const userRef = db.collection('users').doc(userPhone);
+  const userDoc = await userRef.get();
+  const u = userDoc.data();
+  const w = u.withdrawals.find(x=>x.id===wid);
+  if(w) { 
+    w.status = 'success'; 
+    await userRef.update({ withdrawals: u.withdrawals });
+    showToast('উইথড্র রিকোয়েস্ট সফল (SUCCESS)!'); 
+    adminShowWithdraws(); 
+  }
 }
 
-function adminDenyWithdraw(userPhone, wid){
-  const users = loadAll(); const u = users[userPhone];
+async function adminDenyWithdraw(userPhone, wid){
+  const userRef = db.collection('users').doc(userPhone);
+  const userDoc = await userRef.get();
+  const u = userDoc.data();
   const w = u.withdrawals.find(x=>x.id===wid);
-  if(w) { w.status = 'denied'; u.balance += w.amount; saveAll(users); showToast('উইথড্র বাতিল ও রিফান্ড করা হয়েছে!'); adminShowWithdraws(); }
+  if(w) { 
+    w.status = 'denied'; 
+    u.balance += w.amount; 
+    await userRef.update({ withdrawals: u.withdrawals, balance: u.balance });
+    showToast('উইথড্র বাতিল ও রিফান্ড করা হয়েছে!'); 
+    adminShowWithdraws(); 
+  }
 }
 
 function copyBkash(){ navigator.clipboard.writeText('01797025790'); showToast('বিকাশ নাম্বার কপি হয়েছে'); }
@@ -707,7 +765,4 @@ $('copyRefBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText($(
 function logout(){ clearCurrent(); window.location.reload(); }
 </script>
 </body>
-  </html>
-                                                                                          </html>
-                                                                                             </html>
- 
+      </html>
