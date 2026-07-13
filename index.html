@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -143,7 +144,8 @@ input:focus { border-color: var(--accent); }
           <div id="meBalance" style="font-weight:900; font-size:22px;">0 ৳</div>
         </div>
       </div>
-      <div id="runningPanelTrigger" style="margin-top:12px; padding:10px; background:rgba(243,186,47,0.08); border:1px dashed var(--accent); border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+      <!-- এই বক্সে ক্লিক করলে রানিং মাইনিং পেজ ওপেন হবে -->
+      <div id="runningPanelTrigger" onclick="showPage('activePlans')" style="margin-top:12px; padding:10px; background:rgba(243,186,47,0.08); border:1px dashed var(--accent); border-radius:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
         <div style="display:flex; align-items:center; gap:8px; width: 100%;">
           <span class="muted" style="font-weight:bold; white-space:nowrap;">রানিং মাইনিং প্যানেল:</span>
           <marquee id="mePlan" style="font-weight:800; color:var(--accent); margin-left:5px;">NONE</marquee>
@@ -154,6 +156,12 @@ input:focus { border-color: var(--accent); }
     <section id="homePage" class="page active">
       <div style="font-weight:800; font-size:14px; margin-bottom:10px; color:var(--muted)">ক্রিপ্টোকারেন্সি ইনভেস্টমেন্ট প্ল্যানসমূহ:</div>
       <div class="plans" id="plansGrid"></div>
+    </section>
+
+    <!-- নতুন পেজ: সচল মাইনিং প্ল্যানগুলোর তালিকা -->
+    <section id="activePlansPage" class="page">
+      <div style="font-weight:800; color:var(--muted); margin-bottom:12px;">আপনার সচল (Active) মাইনিং প্যানেলসমূহ:</div>
+      <div id="activePlansList"></div>
     </section>
 
     <section id="detailPage" class="page">
@@ -283,7 +291,6 @@ input:focus { border-color: var(--accent); }
 </nav>
 
 <script>
-// আপনার নিজস্ব ফায়ারবেস কনফিগারেশন সচল করা হলো
 const firebaseConfig = {
   apiKey: "AIzaSyDYXPZym4P9WqcOK2ScbfIVr0Uym1c1CYo",
   authDomain: "invest-app-a3076.firebaseapp.com",
@@ -294,20 +301,19 @@ const firebaseConfig = {
   measurementId: "G-622E83Q85T"
 };
 
-// ফায়ারবেস ইনিশিয়ালাইজেশন
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
 const STORAGE = 'crypto_invest_v3';
 const ADMIN_PHONE = '01797025790';
-const TG_BOT_TOKEN = '8725434647:AAGdS27pf-aVSO2Pd8ZHEG_RY988Y1ZKyuVM';
+const TG_BOT_TOKEN = '8725434647:AAHew-jdOUoojb3StI2_Uc1_KFn5GfN7ZvI';
 const TG_CHAT_ID = '6514948285';
 
 let pageHistory = ['home'];
 
 function getCurrent(){ return localStorage.getItem(STORAGE + '_cur') }
 function setCurrent(p){ localStorage.setItem(STORAGE + '_cur', p) }
-function clearCurrent(){ localStorage.removeItem(STORAGE + '_cur') }
+function clearCurrent(){ removeItem(STORAGE + '_cur') }
 function $(id){ return document.getElementById(id) }
 
 function showToast(msg) {
@@ -324,7 +330,6 @@ const PLANS = [
   {id:'Ripple (XRP)', min:7000, daily:900, img:'https://i.postimg.co/d0Y8M6yX/ripple-xrp.png'}
 ];
 
-// এডমিন একাউন্ট বুটস্ট্র্যাপ ফায়ারবেসে চেক করা
 async function bootstrapAdmin(){
   const docRef = db.collection('users').doc(ADMIN_PHONE);
   const doc = await docRef.get();
@@ -349,7 +354,8 @@ function showPage(page){
 
   const map = {
     home: 'homePage', deposit:'depositPage', detail:'detailPage', team:'teamPage',
-    withdraw:'withdrawPage', withdrawHistory:'withdrawHistory', profile:'profilePage', adminPanel:'adminPanel'
+    withdraw:'withdrawPage', withdrawHistory:'withdrawHistory', profile:'profilePage', adminPanel:'adminPanel',
+    activePlans: 'activePlansPage' // নতুন ম্যাপ যুক্ত করা হয়েছে
   };
   
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
@@ -616,11 +622,15 @@ async function renderRefLink(me){
     await db.collection('users').doc(cur).update({ myRefId: randomId });
     me.myRefId = randomId;
   }
-  $('refLink').value = window.location.origin + window.location.pathname + '?ref=' + me.myRefId;
+  let baseLink = window.location.origin + window.location.pathname;
+  baseLink = baseLink.replace('md-bayzid505806', 'criptomining');
+  $('refLink').value = baseLink + '?ref=' + me.myRefId;
 }
 
 async function renderLists(me){
   const fl = $('friendsList'); fl.innerHTML='';
+  let activeDepositorCount = 0; 
+
   if(me.referrals && me.referrals.length){
     for (const r of me.referrals) {
       const actualUserDoc = await db.collection('users').doc(r.phone).get();
@@ -629,12 +639,20 @@ async function renderLists(me){
         const actualUser = actualUserDoc.data();
         totalDep = (actualUser.deposits || []).filter(d=>d.status==='success').reduce((sum, d)=>sum+d.amount, 0);
       }
-      fl.innerHTML += `<div class="listItem">
-        <b>ID: ${r.phone}</b> <span class="muted" style="float:right">জয়েন: ${r.joined}</span>
-        <div style="margin-top:4px; color:var(--accent)">মোট ডিপোজিট করেছে: ${totalDep} ৳</div>
-      </div>`;
+      
+      if (totalDep > 0) {
+        activeDepositorCount++;
+        fl.innerHTML += `<div class="listItem">
+          <b>ID: ${r.phone}</b> <span class="muted" style="float:right">জয়েন: ${r.joined}</span>
+          <div style="margin-top:4px; color:var(--accent)">মোট ডিপোজিট করেছে: ${totalDep} ৳</div>
+        </div>`;
+      }
     }
-  } else fl.innerHTML = '<div class="muted">কোনো রেফারেল টিম মেম্বার নেই</div>';
+  } 
+  
+  if(activeDepositorCount === 0) {
+    fl.innerHTML = '<div class="muted">কোনো ডিপোজিটকারী টিম মেম্বার নেই</div>';
+  }
 
   const wl = $('withdrawList'); wl.innerHTML='';
   if(me.withdrawals && me.withdrawals.length){
@@ -645,6 +663,29 @@ async function renderLists(me){
       </div>`;
     });
   } else wl.innerHTML = '<div class="muted">কোনো উইথড্র হিস্ট্রি রেকর্ড নেই</div>';
+
+  // --- নতুন যুক্ত করা ইউজার একটিভ প্ল্যান রেন্ডারিং সিস্টেম ---
+  const apl = $('activePlansList'); apl.innerHTML = '';
+  if(me.activePlans && me.activePlans.length) {
+    me.activePlans.forEach(ap => {
+      // PLANS অ্যারে থেকে বর্তমান একটিভ প্ল্যানের ছবি ম্যাচ করানো হচ্ছে
+      const matchedPlan = PLANS.find(p => p.id === ap.id);
+      const imgSrc = matchedPlan ? matchedPlan.img : 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png';
+      
+      apl.innerHTML += `
+        <div class="listItem" style="display:flex; align-items:center; gap:15px; padding:15px; background:var(--card-bg);">
+          <img src="${imgSrc}" style="width:50px; height:50px; object-fit:contain;" alt="crypto" />
+          <div>
+            <b style="font-size:16px; color:var(--accent);">${ap.id}</b>
+            <div class="muted" style="margin-top:4px;">দৈনিক ইনকাম: <span style="color:var(--success); font-weight:bold;">${ap.daily} ৳</span></div>
+            <div class="muted" style="font-size:11px;">প্যাকেজের মেয়াদ: ৩৬৫ দিন</div>
+          </div>
+        </div>
+      `;
+    });
+  } else {
+    apl.innerHTML = '<div class="card" style="text-align:center; padding:20px; color:var(--muted);">আপনার বর্তমানে কোনো একটিভ মাইনিং প্যানেল নেই।</div>';
+  }
 }
 
 /* ==================== ADMIN SYSTEM CONTROL ==================== */
@@ -677,10 +718,16 @@ async function adminShowWithdraws(){
 async function adminShowUsers(){
   const snapshot = await db.collection('users').get();
   let out = '<h4 style="color:var(--accent); margin-bottom:10px;">ইউজার অ্যাকাউন্ট ও ডিপোজিট লিস্ট:</h4>';
+  
+  out += `<div class="inputGroup" style="margin-bottom:16px; margin-top:5px;">
+            <input id="adminUserSearch" placeholder="🔍 ইউজার মোবাইল নাম্বার দিয়ে খুঁজুন..." oninput="filterAdminUsers()" style="background:rgba(0,0,0,0.4); border:1px solid var(--accent);">
+          </div>
+          <div id="adminUsersContainer">`;
+          
   snapshot.forEach(doc => {
     const u = doc.data();
     const plansCount = u.activePlans ? u.activePlans.length : 0;
-    out += `<div class="listItem" style="border-left: 3px solid var(--accent)">
+    out += `<div class="listItem admin-user-item" data-phone="${u.phone}" style="border-left: 3px solid var(--accent)">
       <b>ফোন: ${u.phone}</b> | ব্যালেন্স: <span style="color:var(--accent)">${u.balance} ৳</span> | একটিভ প্যাক সংখ্যা: ${plansCount}<br>`;
       if(u.deposits && u.deposits.length){
         out += `<div style="margin-top:6px; background:rgba(0,0,0,0.3); padding:8px; border-radius:8px;">`;
@@ -695,7 +742,21 @@ async function adminShowUsers(){
       }
     out += `</div>`;
   });
+  out += `</div>`;
   $('adminResult').innerHTML = out;
+}
+
+function filterAdminUsers() {
+  const query = $('adminUserSearch').value.trim().toLowerCase();
+  const items = document.querySelectorAll('.admin-user-item');
+  items.forEach(item => {
+    const phone = item.getAttribute('data-phone').toLowerCase();
+    if(phone.includes(query)) {
+      item.style.display = 'block';
+    } else {
+      item.style.display = 'none';
+    }
+  });
 }
 
 async function adminApproveDeposit(userPhone, depId, amount, planName){
@@ -765,4 +826,4 @@ $('copyRefBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText($(
 function logout(){ clearCurrent(); window.location.reload(); }
 </script>
 </body>
-      </html>
+</html>
