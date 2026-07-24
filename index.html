@@ -1,5 +1,3 @@
-
-                                                                     
 <!DOCTYPE html>
 <html lang="bn">
 <head>
@@ -91,7 +89,7 @@ header {
 .gateway-card { background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 16px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; cursor: pointer; }
 .gateway-card.selected { border-color: var(--btn-white); background: rgba(255,255,255,0.06); }
 .gateway-info { display: flex; align-items: center; gap: 12px; }
-.gateway-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: cover; background: #fff; }
+.gateway-logo { width: 40px; height: 40px; border-radius: 8px; object-fit: contain; background: #fff; padding: 2px; }
 .gateway-radio { width: 18px; height: 18px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.4); display: flex; align-items: center; justify-content: center; }
 .gateway-card.selected .gateway-radio { border-color: var(--btn-white); background: var(--btn-white); }
 .gateway-card.selected .gateway-radio::after { content: '✓'; color: var(--btn-text-dark); font-size: 11px; font-weight: bold; }
@@ -122,7 +120,7 @@ input:focus { border-color: var(--nav-active); }
 .profile-meta-title { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
 .menu-section-title { font-size: 13px; font-weight: bold; color: var(--text-white); border-left: 3px solid var(--nav-active); padding-left: 8px; margin: 20px 0 10px 4px; }
 .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.menu-item { background: var(--card-bg); padding: 14px 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-decoration: none; color: #fff; }
+.menu-item { background: var(--card-bg); padding: 14px 12px; border-radius: 12px; display: flex; justify-between: align-items; cursor: pointer; text-decoration: none; color: #fff; }
 .menu-left { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; }
 .menu-arrow { color: var(--text-muted); font-size: 12px; }
 
@@ -131,7 +129,7 @@ input:focus { border-color: var(--nav-active); }
 .authCard { width: 90%; max-width: 400px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 28px 20px; border-radius: 24px; backdrop-filter: blur(10px); }
 
 /* বটম নেভিগেশন বার */
-.bottomNav { position: fixed; left: 0; right: 0; bottom: 0; height: 60px; background: var(--nav-bg); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+.bottomNav { position: fixed; left: 0; right: 0; bottom: 0; height: 60px; background: var(--nav-bg); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-around; align-items: center; z-index: 100; }
 .navBtn { background: transparent; color: var(--text-muted); border: none; height: 100%; flex: 1; cursor: pointer; font-size: 11px; font-weight: 500; display: flex; flex-direction: column; justify-content: center; gap: 4px; align-items: center; transition: all 0.2s; }
 .navBtn.active { color: var(--nav-active); font-weight: bold; }
 .navIcon { font-size: 18px; }
@@ -162,10 +160,12 @@ input:focus { border-color: var(--nav-active); }
     </div>
     <h2 id="authTitle" style="text-align:center; color:#fff; margin-bottom:6px; font-weight:bold;">Welcome Back</h2>
     <p style="text-align:center; color:var(--text-muted); font-size:13px; margin-bottom:24px;">Crypto Energy Platform</p>
+    
     <div>
       <label class="solar-price-label">মোবাইল নাম্বার</label>
       <input id="authPhone" placeholder="01XXXXXXXXX" />
     </div>
+    
     <div style="margin-top:12px;">
       <label class="solar-price-label">পাসওয়ার্ড</label>
       <div class="input-group">
@@ -173,6 +173,16 @@ input:focus { border-color: var(--nav-active); }
         <button class="eyeBtn" type="button" onclick="togglePassView('authPass', this)">👁️</button>
       </div>
     </div>
+
+    <!-- সাইনআপের জন্য কনফার্ম পাসওয়ার্ড ফিল্ড -->
+    <div id="confirmPassBox" style="margin-top:12px; display:none;">
+      <label class="solar-price-label">কনফার্ম পাসওয়ার্ড</label>
+      <div class="input-group">
+        <input id="authConfirmPass" type="password" placeholder="পুনরায় পাসওয়ার্ড দিন" />
+        <button class="eyeBtn" type="button" onclick="togglePassView('authConfirmPass', this)">👁️</button>
+      </div>
+    </div>
+
     <button class="btn-primary" id="authPrimary" style="margin-top:24px;">লগইন করুন</button>
     <div id="toggleAuth" style="margin-top:20px; text-align:center; color:var(--nav-active); cursor:pointer; font-size:13px; text-decoration:underline;">নতুন অ্যাকাউন্ট তৈরি করুন (Signup)</div>
   </div>
@@ -255,7 +265,7 @@ input:focus { border-color: var(--nav-active); }
     
     <div class="gateway-card selected" onclick="selectGateway('bKash')">
       <div class="gateway-info">
-        <img src="https://tds-images.thedailystar.net/rating/icon/bkash.png" class="gateway-logo" alt="bkash">
+        <img src="https://www.logo.wine/a/logo/BKash/BKash-Icon-Logo.wine.svg" class="gateway-logo" alt="bkash">
         <div>
           <div style="font-weight:bold; font-size:14px;">BKASH (বিকাশ পার্সোনাল)</div>
           <div style="font-size:11px; color:var(--text-muted);">উপলব্ধ ১টি চ্যানেল</div>
@@ -320,8 +330,11 @@ input:focus { border-color: var(--nav-active); }
   <!-- ৫. দল (টিম/রেফার) পেজ ইন্টারফেস -->
   <section id="teamPage" class="page">
     <div class="account-asset-card" style="text-align:center;">
-      <h3 style="color:var(--accent-gold); font-weight:bold;">রেফারেল নেটওয়ার্ক</h3>
-      <p style="font-size:12px; color:var(--text-muted); margin-top:4px;">আপনার বন্ধুদের আমন্ত্রণ জানান এবং প্রতিটি সফল অ্যাক্টিভেশনে ২০% কমিশন বোনাস লাভ করুন।</p>
+      <h3 style="color:var(--accent-gold); font-weight:bold;">🎉 রেফারেল নেটওয়ার্ক</h3>
+      <p style="font-size:12px; color:var(--text-muted); margin-top:6px; line-height:1.5;">
+        🔹 <b>ইনস্ট্যান্ট রেফার বোনাস:</b> আপনার লিংকে শুধু সাইনআপ করলেই পাবেন <b>৳১০</b> ফ্রি!<br>
+        🔹 <b>টিম ইনভেস্ট কমিশন:</b> রেফারকৃত ইউজার ডিপোজিট করলে পাবেন <b>১৫% কমিশন</b>!
+      </p>
       <input id="refLinkField" readonly style="text-align:center; background:rgba(0,0,0,0.3); border-color:var(--nav-active); margin-top:12px;" />
       <button class="btn-primary" onclick="copyRefLink()">লিংক কপি করুন</button>
     </div>
@@ -502,14 +515,14 @@ let selectedGatewayName = 'bKash';
 let activeIncomeViewMode = 'active';
 let activeTxFilterMode = 'all';
 
-// ৬টি আপডেটেড ক্রিপ্টো কারেন্সি প্যাকেজ প্ল্যান এবং কাস্টম বিটকয়েন/ক্রিপ্টো গ্রাফিক্স ইমেজ
+// ৬টি আপডেটেড ক্রিপ্টো কারেন্সি প্যাকেজ প্ল্যান (৬০ দিনের মেয়াদ)
 const SOLAR_PRODUCTS = [
-  { id: 'Crypto Core Tier 1', min: 300, daily: 50, total: 18250, days: 365, img: 'https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=600&q=80' },
-  { id: 'Crypto Core Tier 2', min: 500, daily: 110, total: 40150, days: 365, img: 'https://images.unsplash.com/photo-1516245834210-c4c142787335?auto=format&fit=crop&w=600&q=80' },
-  { id: 'Crypto Core Tier 3', min: 1000, daily: 240, total: 87600, days: 365, img: 'https://images.unsplash.com/photo-1622630998477-20aa696ecb05?auto=format&fit=crop&w=600&q=80' },
-  { id: 'Crypto Matrix Plus', min: 2500, daily: 650, total: 237250, days: 365, img: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=600&q=80' },
-  { id: 'Crypto Node Master', min: 5000, daily: 1500, total: 547500, days: 365, img: 'https://images.unsplash.com/photo-1640340434855-6084b1f4901c?auto=format&fit=crop&w=600&q=80' },
-  { id: 'Crypto Quantum Prime', min: 10000, daily: 3300, total: 1204500, days: 365, img: 'https://images.unsplash.com/photo-1621761191319-c6fb62004040?auto=format&fit=crop&w=600&q=80' }
+  { id: 'Crypto Core Tier 1', min: 300, daily: 50, total: 3000, days: 60, img: 'https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=600&q=80' },
+  { id: 'Crypto Core Tier 2', min: 500, daily: 110, total: 6600, days: 60, img: 'https://images.unsplash.com/photo-1516245834210-c4c142787335?auto=format&fit=crop&w=600&q=80' },
+  { id: 'Crypto Core Tier 3', min: 1000, daily: 240, total: 14400, days: 60, img: 'https://images.unsplash.com/photo-1622630998477-20aa696ecb05?auto=format&fit=crop&w=600&q=80' },
+  { id: 'Crypto Matrix Plus', min: 2500, daily: 650, total: 39000, days: 60, img: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?auto=format&fit=crop&w=600&q=80' },
+  { id: 'Crypto Node Master', min: 5000, daily: 1500, total: 90000, days: 60, img: 'https://images.unsplash.com/photo-1640340434855-6084b1f4901c?auto=format&fit=crop&w=600&q=80' },
+  { id: 'Crypto Quantum Prime', min: 10000, daily: 3300, total: 198000, days: 60, img: 'https://images.unsplash.com/photo-1621761191319-c6fb62004040?auto=format&fit=crop&w=600&q=80' }
 ];
 
 function $(id){ return document.getElementById(id); }
@@ -561,8 +574,9 @@ let authState = 'login';
 $('toggleAuth').addEventListener('click', ()=>{
   authState = authState === 'login' ? 'signup' : 'login';
   $('authTitle').innerText = authState === 'login' ? 'Welcome Back' : 'Create Account';
-  $('authPrimary').innerText = authState === 'login' ? 'লগইন করুন' : 'সাইনআপ করুন';
+  $('authPrimary').innerText = authState === 'login' ? 'লগইন করুন' : 'সাইনআপ করুন (৳৩০ ফ্রি)';
   $('toggleAuth').innerText = authState === 'login' ? 'নতুন অ্যাকাউন্ট তৈরি করুন (Signup)' : 'অলরেডি অ্যাকাউন্ট আছে? Login';
+  $('confirmPassBox').style.display = authState === 'signup' ? 'block' : 'none';
 });
 
 $('authPrimary').addEventListener('click', async ()=>{
@@ -575,9 +589,13 @@ $('authPrimary').addEventListener('click', async ()=>{
   const snap = await uRef.get();
 
   if(authState === 'signup'){
+    const confPass = $('authConfirmPass').value.trim();
+    if(pass !== confPass) return showToast('পাসওয়ার্ড এবং কনফার্ম পাসওয়ার্ড মিলছে না!');
     if(snap.exists) return showToast('এই নাম্বার দিয়ে অলরেডি অ্যাকাউন্ট খোলা আছে');
+    
     const uRefId = 'cry_' + Math.random().toString(36).substring(2, 9);
-    const payload = { phone, password:pass, balance:0, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId:uRefId };
+    
+    const payload = { phone, password:pass, balance:30, activePlans:[], referrals:[], refEarn:0, deposits:[], withdrawals:[], referrer:null, myRefId:uRefId };
     
     const urlParams = new URLSearchParams(window.location.search);
     const refCode = urlParams.get('ref');
@@ -586,15 +604,26 @@ $('authPrimary').addEventListener('click', async ()=>{
       if(!matchQuery.empty){
         const parentDoc = matchQuery.docs[0];
         payload.referrer = parentDoc.id;
+        
         const pData = parentDoc.data();
         pData.referrals.push({ phone, joined: new Date().toLocaleDateString('bn-BD'), targetValue:0 });
-        await db.collection('users').doc(parentDoc.id).update({ referrals: pData.referrals });
+        
+        const updatedRefEarn = (pData.refEarn || 0) + 10;
+        const updatedBalance = (pData.balance || 0) + 10;
+        
+        await db.collection('users').doc(parentDoc.id).update({ 
+          referrals: pData.referrals,
+          balance: updatedBalance,
+          refEarn: updatedRefEarn
+        });
       }
     }
     await uRef.set(payload);
-    sendTelegramAlert(`👤 <b>নতুন ইউজার যুক্ত হয়েছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🔗 রেফারেল কোড: ${refCode || 'সরাসরি (None)'}`);
-    showToast('অ্যাকাউন্ট তৈরি সম্পন্ন হয়েছে! লগইন করুন।');
-    authState = 'login'; $('toggleAuth').click();
+    sendTelegramAlert(`👤 <b>নতুন ইউজার সাইনআপ করেছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🎁 সাইনআপ বোনাস: ৳৩০\n🔗 রেফারেল কোড: ${refCode || 'সরাসরি (None)'}`);
+    showToast('অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! ৳৩০ বোনাস যোগ করা হয়েছে।');
+    
+    setUserSession(phone); 
+    parseAppEntry();
   } else {
     if(!snap.exists || snap.data().password !== pass) return showToast('মোবাইল নাম্বার অথবা পাসওয়ার্ড ভুল!');
     setUserSession(phone); parseAppEntry();
@@ -742,7 +771,7 @@ async function executeWithdraw(){
 
   await ref.update({ balance: user.balance, withdrawals: user.withdrawals });
   sendTelegramAlert(`💸 <b>নতুন উত্তোলন রিকোয়েস্ট!</b>\n\n👤 ইউজার: <code>${s}</code>\n💰 পরিমাণ: ৳${amt}\n🏦 মেথড: ${method}\n📱 নম্বর: <code>${num}</code>`);
-  showToast('উত্তোলন রিকোয়েস্ট সফলভাবে ওনার ডাটাবেজে পাঠানো হয়েছে');
+  showToast('উত্তোলন রিকোয়েস্ট সফলভাবে পাঠানো হয়েছে');
   showPage('profile');
 }
 
@@ -779,7 +808,7 @@ function buildIncomeDashboard(u){
       <div class="account-asset-card" style="border-left:4px solid var(--nav-active);">
         <div style="font-weight:bold; font-size:14px; color:var(--accent-gold);">${p.id}</div>
         <div style="margin-top:6px; font-size:12px; opacity:0.8;">দৈনিক রানিং প্রফিট: ৳${p.daily}</div>
-        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">পদ্ধতি: অটোমেটিক ক্লাউড মাইনিং (৩৬৫ দিন)</div>
+        <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">পদ্ধতি: অটোমেটিক ক্লাউড মাইনিং (৬০ দিন)</div>
       </div>
     `;
   });
@@ -901,7 +930,7 @@ async function processDailyEarningDistribution(){
     user.deposits.push({ id:'inc_'+Date.now(), plan:'Crypto Mining Auto Credit', amount:accumulated, status:'income_credit', date:new Date().toLocaleString('bn-BD') });
     await ref.update({ balance: user.balance, activePlans: user.activePlans, deposits: user.deposits });
     renderModuleEngine();
-    showToast(`💰 দৈনিক মাইনিং প্রফিট ৳${accumulated} আপনার একাউন্টে যোগ হয়েছে!`);
+    showToast(`💰 দৈনিক প্রফিট ৳${accumulated} আপনার একাউন্টে যোগ হয়েছে!`);
   }
 }
 
@@ -970,7 +999,6 @@ async function adminLoadUsers(){
   $('adminPanelStatusBox').innerHTML = code;
 }
 
-// মোবাইল নম্বর চার্জ দেওয়ার জন্য অ্যাডমিন কাস্টম ফিল্টার সার্চ ইঞ্জিন ফাংশন
 async function executeAdminSearch(){
   const keyword = $('adminSearchInput').value.trim();
   if(!keyword) return showToast('মোবাইল নম্বরটি টাইপ করুন');
@@ -1026,12 +1054,12 @@ async function adminActionDeposit(phone, depId, amt, planName){
       const pSnap = await pRef.get();
       if(pSnap.exists){
         const pData = pSnap.data();
-        const bonus = Math.round(amt * 0.20);
+        const bonus = Math.round(amt * 0.15);
         await pRef.update({ balance: (pData.balance||0)+bonus, refEarn: (pData.refEarn||0)+bonus });
       }
     }
     await ref.update({ deposits: u.deposits, activePlans: u.activePlans });
-    showToast('ডিপোজিট এবং ক্রিপ্টো মাইনিং প্যাকেজ সক্রিয় হয়েছে!');
+    showToast('ডিপোজিট এবং ক্রিপ্টো প্যাকেজ সক্রিয় হয়েছে!');
     adminLoadUsers();
   }
 }
