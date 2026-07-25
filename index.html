@@ -130,15 +130,11 @@ input:focus { border-color: var(--nav-active); }
 .authCard { width: 90%; max-width: 400px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 28px 20px; border-radius: 24px; backdrop-filter: blur(10px); }
 
 /* বটম নেভিগেশন বার */
-.bottomNav { position: fixed; left: 0; right: 0; bottom: 0; height: 60px; background: var(--nav-bg); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-around: space-around; align-items: center; z-index: 100; }
+.bottomNav { position: fixed; left: 0; right: 0; bottom: 0; height: 60px; background: var(--nav-bg); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-content: space-around; align-items: center; z-index: 100; }
 .navBtn { background: transparent; color: var(--text-muted); border: none; height: 100%; flex: 1; cursor: pointer; font-size: 11px; font-weight: 500; display: flex; flex-direction: column; justify-content: center; gap: 4px; align-items: center; transition: all 0.2s; }
 .navBtn.active { color: var(--nav-active); font-weight: bold; }
 .navIcon { font-size: 18px; }
 .navBtn.active .navIcon { transform: scale(1.1); }
-
-.status-success { color: #10b981; font-weight: bold; }
-.status-pending { color: #f39c12; font-weight: bold; }
-.status-denied { color: #ef4444; font-weight: bold; }
 </style>
 
 <!-- ফায়ারবেস কোর ও স্টোর স্ক্রিপ্ট -->
@@ -520,10 +516,10 @@ let selectedGatewayName = 'bKash';
 let activeIncomeViewMode = 'active';
 let activeTxFilterMode = 'all';
 
-// ক্যাশিং সিস্টেম এরিয়া
+// ক্যাশিং সিস্টেম এরিয়া (স্পিড ফাস্ট করার জন্য)
 let currentUserCache = null;
 
-// ৬টি ক্রিপ্টো কারেন্সি প্যাকেজ প্ল্যান (৬০ দিনের মেয়াদ)
+// ৬টি আপডেটেড ক্রিপ্টো কারেন্সি প্যাকেজ প্ল্যান (৬০ দিনের মেয়াদ)
 const SOLAR_PRODUCTS = [
   { id: 'Crypto Core Tier 1', min: 300, daily: 50, total: 3000, days: 60, img: 'https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=600&q=80' },
   { id: 'Crypto Core Tier 2', min: 500, daily: 110, total: 6600, days: 60, img: 'https://images.unsplash.com/photo-1516245834210-c4c142787335?auto=format&fit=crop&w=600&q=80' },
@@ -627,7 +623,7 @@ $('authPrimary').addEventListener('click', async ()=>{
       }
     }
     await uRef.set(payload);
-    sendTelegramAlert👤 <b>নতুন ইউজার সাইনআপ করেছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🎁 সাইনআপ বোনাস: ৳৩০\n🔗 রেফারেল কোড: ${refCode || 'সরাসরি (None)'}`);
+    sendTelegramAlert(`👤 <b>নতুন ইউজার সাইনআপ করেছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🎁 সাইনআপ বোনাস: ৳৩০\n🔗 রেফারেল কোড: ${refCode || 'সরাসরি (None)'}`);
     showToast('অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! ৳৩০ বোনাস যোগ করা হয়েছে।');
     
     setUserSession(phone); 
@@ -638,6 +634,7 @@ $('authPrimary').addEventListener('click', async ()=>{
   }
 });
 
+// তাত্ক্ষণিক পেজ পরিবর্তনের ফাস্ট শো-পেজ ফাংশন
 function showPage(pID){
   if(internalHistory[internalHistory.length - 1] !== pID) internalHistory.push(pID);
   $('backBtn').style.visibility = (pID === 'home') ? 'hidden' : 'visible';
@@ -647,6 +644,7 @@ function showPage(pID){
 
   const schema = { home:'homePage', income:'incomePage', depositChannel:'depositChannelPage', depositAmount:'depositAmountPage', team:'teamPage', txHistory:'txHistoryPage', withdrawForm:'withdrawFormPage', profile:'profilePage', changePass:'changePassPage', adminPanelPage:'adminPanelPage' };
   
+  // ১. সাথে সাথে পেজ সুইচ করা (Visual Feedback Instant)
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   if(schema[pID]) $(schema[pID]).classList.add('active');
 
@@ -654,6 +652,7 @@ function showPage(pID){
   const idx = ['home', 'income', 'team', 'profile'].indexOf(pID);
   if(idx !== -1) document.querySelectorAll('.bottomNav .navBtn')[idx].classList.add('active');
 
+  // ২. ব্যাকগ্রাউন্ডে রেসপনসিভভাবে ডেটা রেন্ডার করা
   renderModuleEngine();
 }
 
@@ -664,9 +663,11 @@ function goBack(){
   } else showPage('home');
 }
 
+// ফাস্ট ক্যাশ ব্যাকড রেন্ডারিং ইঞ্জিন
 async function renderModuleEngine(){
   const s = getUserSession(); if(!s) return;
 
+  // ক্যাশে না থাকলে প্রথমবার ফায়ারবেস থেকে নেওয়া
   if(!currentUserCache){
     const dSnap = await db.collection('users').doc(s).get();
     if(!dSnap.exists) return;
@@ -693,6 +694,7 @@ async function renderModuleEngine(){
   const currentOrigin = window.location.origin + window.location.pathname;
   $('refLinkField').value = currentOrigin + '?ref=' + (user.myRefId || '');
 
+  // সাইলেন্ট ব্যাকগ্রাউন্ড আপডেট (যার কারণে ইউজার কোনো ল্যাগ পাবেন না)
   db.collection('users').doc(s).get().then(snap => {
     if(snap.exists) currentUserCache = snap.data();
   });
@@ -700,7 +702,7 @@ async function renderModuleEngine(){
 
 function buildProductGrid(){
   const box = $('plansGrid'); 
-  if(box.children.length > 0) return;
+  if(box.children.length > 0) return; // প্রোডাক্টগুলো বারবার রেন্ডার করার প্রয়োজন নেই
   box.innerHTML = '';
   SOLAR_PRODUCTS.forEach(p=>{
     const card = document.createElement('div'); card.className = 'solar-card';
@@ -765,8 +767,8 @@ async function executeDeposit(){
   uData.deposits.push({ id:'dep_'+Date.now(), plan, amount, tx, status:'pending', date:time });
   
   await ref.update({ deposits: uData.deposits });
-  currentUserCache = uData;
-  sendTelegramAlert📥 <b>নতুন জমা রিকোয়েস্ট!</b>\n\n👤 ইউজার: <code>${s}</code>\n📦 প্ল্যান: ${plan}\n💰 পরিমাণ: ৳${amount}\n⛓️ TxID: <code>${tx}</code>\n🏦 গেটওয়ে: ${selectedGatewayName}`);
+  currentUserCache = uData; // ক্যাশ সিঙ্ক
+  sendTelegramAlert(`📥 <b>নতুন জমা রিকোয়েস্ট!</b>\n\n👤 ইউজার: <code>${s}</code>\n📦 প্ল্যান: ${plan}\n💰 পরিমাণ: ৳${amount}\n⛓️ TxID: <code>${tx}</code>\n🏦 গেটওয়ে: ${selectedGatewayName}`);
   showToast('জমা রিকোয়েস্ট সাবমিট হয়েছে। অ্যাডমিন প্যানেল যাচায়ের পর সক্রিয় হবে।');
   showPage('home');
 }
@@ -791,8 +793,8 @@ async function executeWithdraw(){
   user.withdrawals.push({ id:'wit_'+Date.now(), method, number:num, amount:amt, status:'pending', date:time });
 
   await ref.update({ balance: user.balance, withdrawals: user.withdrawals });
-  currentUserCache = user;
-  sendTelegramAlert💸 <b>নতুন উত্তোলন রিকোয়েস্ট!</b>\n\n👤 ইউজার: <code>${s}</code>\n💰 পরিমাণ: ৳${amt}\n🏦 মেথড: ${method}\n📱 নম্বর: <code>${num}</code>`);
+  currentUserCache = user; // ক্যাশ সিঙ্ক
+  sendTelegramAlert(`💸 <b>নতুন উত্তোলন রিকোয়েস্ট!</b>\n\n👤 ইউজার: <code>${s}</code>\n💰 পরিমাণ: ৳${amt}\n🏦 মেথড: ${method}\n📱 নম্বর: <code>${num}</code>`);
   showToast('উত্তোলন রিকোয়েস্ট সফলভাবে পাঠানো হয়েছে');
   showPage('profile');
 }
@@ -923,7 +925,7 @@ async function executePasswordReset(){
   if(newP !== confP) return showToast('কনফার্ম পাসওয়ার্ড ম্যাচ করেনি');
 
   await ref.update({ password: newP });
-  currentUserCache.password = newP;
+  currentUserCache.password = newP; // ক্যাশ সিঙ্ক
   showToast('পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে');
   showPage('profile');
 }
@@ -951,14 +953,14 @@ async function processDailyEarningDistribution(){
     if(!user.deposits) user.deposits = [];
     user.deposits.push({ id:'inc_'+Date.now(), plan:'Crypto Mining Auto Credit', amount:accumulated, status:'income_credit', date:new Date().toLocaleString('bn-BD') });
     await ref.update({ balance: user.balance, activePlans: user.activePlans, deposits: user.deposits });
-    currentUserCache = user;
+    currentUserCache = user; // ক্যাশ সিঙ্ক
     renderModuleEngine();
-    showToast💰 দৈনিক প্রফিট ৳${accumulated} আপনার একাউন্টে যোগ হয়েছে!`);
+    showToast(`💰 দৈনিক প্রফিট ৳${accumulated} আপনার একাউন্টে যোগ হয়েছে!`);
   }
 }
 
 function sendTelegramAlert(text) {
-  fetch(https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage, {
+  fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: 'HTML' })
@@ -1017,12 +1019,11 @@ async function adminLoadUsers(){
         `;
       }
     });
-    code += </div>;
+    code += `</div>`;
   });
   $('adminPanelStatusBox').innerHTML = code;
 }
 
-// * সম্পূর্ণ ঠিক করা অ্যাডমিন সার্চ ফাংশন (যেখানে বাটন দেখাবে) *
 async function executeAdminSearch(){
   const keyword = $('adminSearchInput').value.trim();
   if(!keyword) return showToast('মোবাইল নম্বরটি টাইপ করুন');
@@ -1030,7 +1031,7 @@ async function executeAdminSearch(){
   const docRef = db.collection('users').doc(keyword);
   const snap = await docRef.get();
   
-  let code = <h4 style="color:var(--accent-gold); margin-bottom:10px;">অনুসন্ধানের ফলাফল (${keyword}):</h4>;
+  let code = `<h4 style="color:var(--accent-gold); margin-bottom:10px;">অনুসন্ধানের ফলাফল (${keyword}):</h4>`;
   if(!snap.exists){
     code += '<p style="font-size:12px; opacity:0.6;">এই মোবাইল নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি।</p>';
   } else {
@@ -1044,40 +1045,21 @@ async function executeAdminSearch(){
         <hr style="margin:10px 0; opacity:0.1;">
         <b>ডিপোজিট হিস্টোরি:</b><br>
     `;
-    if(!u.deposits || u.deposits.length === 0) {
-      code += '<span style="font-size:11px; opacity:0.5;">কোনো ডেটা নেই</span><br>';
-    } else {
+    if(!u.deposits || u.deposits.length === 0) code += '<span style="font-size:11px; opacity:0.5;">কোনো ডেটা নেই</span><br>';
+    else {
       u.deposits.forEach(d=>{
-        let approveBtn = '';
-        if(d.status === 'pending') {
-          approveBtn = <button class="btn-primary" style="padding:6px; font-size:11px; margin-top:6px; border-radius:6px;" onclick="adminActionDeposit('${u.phone}','${d.id}', ${d.amount}, '${d.plan}')">Approve Deposit & Pack</button>;
-        }
-        let statusClass = d.status === 'success' ? 'status-success' : (d.status === 'pending' ? 'status-pending' : '');
-        
-        code += `
-          <div style="font-size:11px; background:rgba(0,0,0,0.2); padding:8px; border-radius:6px; margin-top:6px;">
-            ${d.date || ''} - ${d.plan} - ৳${d.amount}<br>
-            [<span class="${statusClass}">${d.status.toUpperCase()}</span>] TxID: <code>${d.tx || 'N/A'}</code>
-            ${approveBtn}
-          </div>
-        `;
+        code += `<div style="font-size:11px; background:rgba(0,0,0,0.2); padding:5px; border-radius:4px; margin-top:4px;">${d.date} - ${d.plan} - ৳${d.amount} [${d.status.toUpperCase()}] TxID: ${d.tx || 'N/A'}</div>`;
       });
     }
     
-    code += <br><b>উইথড্র হিস্টোরি:</b><br>;
-    if(!u.withdrawals || u.withdrawals.length === 0) {
-      code += '<span style="font-size:11px; opacity:0.5;">কোনো ডেটা নেই</span><br>';
-    } else {
+    code += `<br><b>উইথড্র হিস্টোরি:</b><br>`;
+    if(!u.withdrawals || u.withdrawals.length === 0) code += '<span style="font-size:11px; opacity:0.5;">কোনো ডেটা নেই</span><br>';
+    else {
       u.withdrawals.forEach(w=>{
-        let statusClass = w.status === 'success' ? 'status-success' : (w.status === 'denied' ? 'status-denied' : 'status-pending');
-        code += `
-          <div style="font-size:11px; background:rgba(0,0,0,0.2); padding:6px; border-radius:6px; margin-top:4px;">
-            ${w.date || ''} - ৳${w.amount} to ${w.number} [<span class="${statusClass}">${w.status.toUpperCase()}</span>]
-          </div>
-        `;
+        code += `<div style="font-size:11px; background:rgba(0,0,0,0.2); padding:5px; border-radius:4px; margin-top:4px;">${w.date} - ৳${w.amount} to ${w.number} [${w.status.toUpperCase()}]</div>`;
       });
     }
-    code += </div>;
+    code += `</div>`;
   }
   $('adminPanelStatusBox').innerHTML = code;
 }
@@ -1092,7 +1074,6 @@ async function adminActionDeposit(phone, depId, amt, planName){
     const meta = SOLAR_PRODUCTS.find(x=>x.id === planName) || { id:planName, daily:50 };
     u.activePlans.push({ id: meta.id, daily: meta.daily, lastCreditTs: Date.now() });
 
-    // রেফার বোনাস (১৫%) আপডেট
     if(u.referrer){
       const pRef = db.collection('users').doc(u.referrer);
       const pSnap = await pRef.get();
@@ -1104,14 +1085,7 @@ async function adminActionDeposit(phone, depId, amt, planName){
     }
     await ref.update({ deposits: u.deposits, activePlans: u.activePlans });
     showToast('ডিপোজিট এবং ক্রিপ্টো প্যাকেজ সক্রিয় হয়েছে!');
-    
-    // সার্চ মোডে থাকলে রিয়েলটাইমে সার্চ ভিউ রিফ্রেশ করা
-    const currentSearchInput = $('adminSearchInput').value.trim();
-    if(currentSearchInput === phone) {
-      executeAdminSearch();
-    } else {
-      adminLoadUsers();
-    }
+    adminLoadUsers();
   }
 }
 
@@ -1130,4 +1104,3 @@ async function adminActionWithdraw(phone, wid, status){
 </script>
 </body>
 </html>
-
