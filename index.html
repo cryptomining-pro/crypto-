@@ -1,7 +1,7 @@
+
 <!DOCTYPE html>
 <html lang="bn">
 <head>
-  <meta name="google-site-verification" content="qtLoyJTyoH0CfzndHzvsflee6ythmjzl7V-fyBpMdXg" />
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" />
 <title>CRYPTO ENERGY</title>
@@ -121,7 +121,7 @@ input:focus { border-color: var(--nav-active); }
 .profile-meta-title { font-size: 12px; color: var(--text-muted); margin-bottom: 4px; text-transform: uppercase; }
 .menu-section-title { font-size: 13px; font-weight: bold; color: var(--text-white); border-left: 3px solid var(--nav-active); padding-left: 8px; margin: 20px 0 10px 4px; }
 .menu-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.menu-item { background: var(--card-bg); padding: 14px 12px; border-radius: 12px; display: flex; justify-between: align-items; cursor: pointer; text-decoration: none; color: #fff; }
+.menu-item { background: var(--card-bg); padding: 14px 12px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; cursor: pointer; text-decoration: none; color: #fff; }
 .menu-left { display: flex; align-items: center; gap: 10px; font-size: 13px; font-weight: 500; }
 .menu-arrow { color: var(--text-muted); font-size: 12px; }
 
@@ -130,11 +130,15 @@ input:focus { border-color: var(--nav-active); }
 .authCard { width: 90%; max-width: 400px; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); padding: 28px 20px; border-radius: 24px; backdrop-filter: blur(10px); }
 
 /* বটম নেভিগেশন বার */
-.bottomNav { position: fixed; left: 0; right: 0; bottom: 0; height: 60px; background: var(--nav-bg); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-around; align-items: center; z-index: 100; }
+.bottomNav { position: fixed; left: 0; right: 0; bottom: 0; height: 60px; background: var(--nav-bg); border-top: 1px solid rgba(255,255,255,0.05); display: flex; justify-around: space-around; align-items: center; z-index: 100; }
 .navBtn { background: transparent; color: var(--text-muted); border: none; height: 100%; flex: 1; cursor: pointer; font-size: 11px; font-weight: 500; display: flex; flex-direction: column; justify-content: center; gap: 4px; align-items: center; transition: all 0.2s; }
 .navBtn.active { color: var(--nav-active); font-weight: bold; }
 .navIcon { font-size: 18px; }
 .navBtn.active .navIcon { transform: scale(1.1); }
+
+.status-success { color: #10b981; font-weight: bold; }
+.status-pending { color: #f39c12; font-weight: bold; }
+.status-denied { color: #ef4444; font-weight: bold; }
 </style>
 
 <!-- ফায়ারবেস কোর ও স্টোর স্ক্রিপ্ট -->
@@ -516,7 +520,10 @@ let selectedGatewayName = 'bKash';
 let activeIncomeViewMode = 'active';
 let activeTxFilterMode = 'all';
 
-// ৬টি আপডেটেড ক্রিপ্টো কারেন্সি প্যাকেজ প্ল্যান (৬০ দিনের মেয়াদ)
+// ক্যাশিং সিস্টেম এরিয়া
+let currentUserCache = null;
+
+// ৬টি ক্রিপ্টো কারেন্সি প্যাকেজ প্ল্যান (৬০ দিনের মেয়াদ)
 const SOLAR_PRODUCTS = [
   { id: 'Crypto Core Tier 1', min: 300, daily: 50, total: 3000, days: 60, img: 'https://images.unsplash.com/photo-1621416894569-0f39ed31d247?auto=format&fit=crop&w=600&q=80' },
   { id: 'Crypto Core Tier 2', min: 500, daily: 110, total: 6600, days: 60, img: 'https://images.unsplash.com/photo-1516245834210-c4c142787335?auto=format&fit=crop&w=600&q=80' },
@@ -529,7 +536,7 @@ const SOLAR_PRODUCTS = [
 function $(id){ return document.getElementById(id); }
 function getUserSession(){ return localStorage.getItem(STORAGE_KEY + '_user'); }
 function setUserSession(ph){ localStorage.setItem(STORAGE_KEY + '_user', ph); }
-function destroySession(){ localStorage.removeItem(STORAGE_KEY + '_user'); }
+function destroySession(){ localStorage.removeItem(STORAGE_KEY + '_user'); currentUserCache = null; }
 
 function showToast(msg) {
   const t = $('toast'); t.innerText = msg;
@@ -552,7 +559,7 @@ function togglePassView(id, btn) {
 }
 
 window.addEventListener('load', ()=>{
-  setTimeout(()=>{ $('loader').style.display='none'; parseAppEntry(); }, 1000);
+  setTimeout(()=>{ $('loader').style.display='none'; parseAppEntry(); }, 800);
 });
 
 function parseAppEntry(){
@@ -620,7 +627,7 @@ $('authPrimary').addEventListener('click', async ()=>{
       }
     }
     await uRef.set(payload);
-    sendTelegramAlert(`👤 <b>নতুন ইউজার সাইনআপ করেছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🎁 সাইনআপ বোনাস: ৳৩০\n🔗 রেফারেল কোড: ${refCode || 'সরাসরি (None)'}`);
+    sendTelegramAlert👤 <b>নতুন ইউজার সাইনআপ করেছে!</b>\n\n📱 মোবাইল: <code>${phone}</code>\n🎁 সাইনআপ বোনাস: ৳৩০\n🔗 রেফারেল কোড: ${refCode || 'সরাসরি (None)'}`);
     showToast('অ্যাকাউন্ট সফলভাবে তৈরি হয়েছে! ৳৩০ বোনাস যোগ করা হয়েছে।');
     
     setUserSession(phone); 
@@ -639,6 +646,7 @@ function showPage(pID){
   $('pageMainHeaderTitle').innerText = headers[pID] || 'CRYPTO ENERGY';
 
   const schema = { home:'homePage', income:'incomePage', depositChannel:'depositChannelPage', depositAmount:'depositAmountPage', team:'teamPage', txHistory:'txHistoryPage', withdrawForm:'withdrawFormPage', profile:'profilePage', changePass:'changePassPage', adminPanelPage:'adminPanelPage' };
+  
   document.querySelectorAll('.page').forEach(el=>el.classList.remove('active'));
   if(schema[pID]) $(schema[pID]).classList.add('active');
 
@@ -658,9 +666,14 @@ function goBack(){
 
 async function renderModuleEngine(){
   const s = getUserSession(); if(!s) return;
-  const dSnap = await db.collection('users').doc(s).get();
-  if(!dSnap.exists) return;
-  const user = dSnap.data();
+
+  if(!currentUserCache){
+    const dSnap = await db.collection('users').doc(s).get();
+    if(!dSnap.exists) return;
+    currentUserCache = dSnap.data();
+  }
+
+  const user = currentUserCache;
 
   $('mePhone').innerText = user.phone;
   $('meBalance').innerText = '৳ ' + Number(user.balance).toFixed(2);
@@ -679,10 +692,16 @@ async function renderModuleEngine(){
   
   const currentOrigin = window.location.origin + window.location.pathname;
   $('refLinkField').value = currentOrigin + '?ref=' + (user.myRefId || '');
+
+  db.collection('users').doc(s).get().then(snap => {
+    if(snap.exists) currentUserCache = snap.data();
+  });
 }
 
 function buildProductGrid(){
-  const box = $('plansGrid'); box.innerHTML = '';
+  const box = $('plansGrid'); 
+  if(box.children.length > 0) return;
+  box.innerHTML = '';
   SOLAR_PRODUCTS.forEach(p=>{
     const card = document.createElement('div'); card.className = 'solar-card';
     card.innerHTML = `
@@ -746,7 +765,8 @@ async function executeDeposit(){
   uData.deposits.push({ id:'dep_'+Date.now(), plan, amount, tx, status:'pending', date:time });
   
   await ref.update({ deposits: uData.deposits });
-  sendTelegramAlert(`📥 <b>নতুন জমা রিকোয়েস্ট!</b>\n\n👤 ইউজার: <code>${s}</code>\n📦 প্ল্যান: ${plan}\n💰 পরিমাণ: ৳${amount}\n⛓️ TxID: <code>${tx}</code>\n🏦 গেটওয়ে: ${selectedGatewayName}`);
+  currentUserCache = uData;
+  sendTelegramAlert📥 <b>নতুন জমা রিকোয়েস্ট!</b>\n\n👤 ইউজার: <code>${s}</code>\n📦 প্ল্যান: ${plan}\n💰 পরিমাণ: ৳${amount}\n⛓️ TxID: <code>${tx}</code>\n🏦 গেটওয়ে: ${selectedGatewayName}`);
   showToast('জমা রিকোয়েস্ট সাবমিট হয়েছে। অ্যাডমিন প্যানেল যাচায়ের পর সক্রিয় হবে।');
   showPage('home');
 }
@@ -771,7 +791,8 @@ async function executeWithdraw(){
   user.withdrawals.push({ id:'wit_'+Date.now(), method, number:num, amount:amt, status:'pending', date:time });
 
   await ref.update({ balance: user.balance, withdrawals: user.withdrawals });
-  sendTelegramAlert(`💸 <b>নতুন উত্তোলন রিকোয়েস্ট!</b>\n\n👤 ইউজার: <code>${s}</code>\n💰 পরিমাণ: ৳${amt}\n🏦 মেথড: ${method}\n📱 নম্বর: <code>${num}</code>`);
+  currentUserCache = user;
+  sendTelegramAlert💸 <b>নতুন উত্তোলন রিকোয়েস্ট!</b>\n\n👤 ইউজার: <code>${s}</code>\n💰 পরিমাণ: ৳${amt}\n🏦 মেথড: ${method}\n📱 নম্বর: <code>${num}</code>`);
   showToast('উত্তোলন রিকোয়েস্ট সফলভাবে পাঠানো হয়েছে');
   showPage('profile');
 }
@@ -824,7 +845,7 @@ function toggleIncomeTab(mode){
   } else renderModuleEngine();
 }
 
-async function buildTeamView(u){
+function buildTeamView(u){
   const box = $('teamMembersList'); box.innerHTML = '';
   if(!u.referrals || u.referrals.length === 0){
     box.innerHTML = '<div class="empty-box">আপনার রেফারেলে এখনো কোনো সদস্য যুক্ত হয়নি।</div>';
@@ -850,40 +871,39 @@ function filterTxHistory(mode){
   $('txDepTab').classList.toggle('active', mode==='dep');
   $('txWitTab').classList.toggle('active', mode==='wit');
 
-  const s = getUserSession();
-  db.collection('users').doc(s).get().then(snap=>{
-    const u = snap.data();
-    const box = $('txHistoryDataBox'); box.innerHTML = '';
-    let list = [];
+  const u = currentUserCache;
+  if(!u) return;
 
-    if(mode === 'all' || mode === 'dep'){
-      (u.deposits||[]).forEach(d=>{ list.push({ amt:d.amount, title:'জমা ফান্ড রিকোয়েস্ট ('+d.plan+')', type:'deposit', status:d.status, date:d.date, ts:d.id }); });
-    }
-    if(mode === 'all' || mode === 'wit'){
-      (u.withdrawals||[]).forEach(w=>{ list.push({ amt:w.amount, title:'উত্তোলন ফান্ড ('+w.method+')', type:'withdraw', status:w.status, date:w.date, ts:w.id }); });
-    }
+  const box = $('txHistoryDataBox'); box.innerHTML = '';
+  let list = [];
 
-    if(list.length === 0){
-      box.innerHTML = '<div class="empty-box">বর্তমানে আপনার কোনো লেনদেনের রেকর্ড নেই।</div>';
-      return;
-    }
+  if(mode === 'all' || mode === 'dep'){
+    (u.deposits||[]).forEach(d=>{ list.push({ amt:d.amount, title:'জমা ফান্ড রিকোয়েস্ট ('+d.plan+')', type:'deposit', status:d.status, date:d.date, ts:d.id }); });
+  }
+  if(mode === 'all' || mode === 'wit'){
+    (u.withdrawals||[]).forEach(w=>{ list.push({ amt:w.amount, title:'উত্তোলনের রেকর্ড ('+w.method+')', type:'withdraw', status:w.status, date:w.date, ts:w.id }); });
+  }
 
-    list.sort((a,b)=>b.ts - a.ts);
-    list.forEach(i=>{
-      const color = i.status==='success'?'var(--success)':i.status==='denied'?'var(--danger)':'orange';
-      box.innerHTML += `
-        <div class="menu-item" style="margin-bottom:8px; background:rgba(0,0,0,0.15);">
-          <div>
-            <div style="font-size:13px; font-weight:bold;">${i.title}</div>
-            <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">${i.date}</div>
-          </div>
-          <div style="text-align:right;">
-            <div style="font-weight:bold;">৳ ${i.amt}</div>
-            <div style="font-size:11px; color:${color}; font-weight:bold; margin-top:2px;">${i.status.toUpperCase()}</div>
-          </div>
+  if(list.length === 0){
+    box.innerHTML = '<div class="empty-box">বর্তমানে আপনার কোনো লেনদেনের রেকর্ড নেই।</div>';
+    return;
+  }
+
+  list.sort((a,b)=>b.ts - a.ts);
+  list.forEach(i=>{
+    const color = i.status==='success'?'var(--success)':i.status==='denied'?'var(--danger)':'orange';
+    box.innerHTML += `
+      <div class="menu-item" style="margin-bottom:8px; background:rgba(0,0,0,0.15);">
+        <div>
+          <div style="font-size:13px; font-weight:bold;">${i.title}</div>
+          <div style="font-size:11px; color:var(--text-muted); margin-top:4px;">${i.date}</div>
         </div>
-      `;
-    });
+        <div style="text-align:right;">
+          <div style="font-weight:bold;">৳ ${i.amt}</div>
+          <div style="font-size:11px; color:${color}; font-weight:bold; margin-top:2px;">${i.status.toUpperCase()}</div>
+        </div>
+      </div>
+    `;
   });
 }
 
@@ -903,6 +923,7 @@ async function executePasswordReset(){
   if(newP !== confP) return showToast('কনফার্ম পাসওয়ার্ড ম্যাচ করেনি');
 
   await ref.update({ password: newP });
+  currentUserCache.password = newP;
   showToast('পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে');
   showPage('profile');
 }
@@ -930,13 +951,14 @@ async function processDailyEarningDistribution(){
     if(!user.deposits) user.deposits = [];
     user.deposits.push({ id:'inc_'+Date.now(), plan:'Crypto Mining Auto Credit', amount:accumulated, status:'income_credit', date:new Date().toLocaleString('bn-BD') });
     await ref.update({ balance: user.balance, activePlans: user.activePlans, deposits: user.deposits });
+    currentUserCache = user;
     renderModuleEngine();
-    showToast(`💰 দৈনিক প্রফিট ৳${accumulated} আপনার একাউন্টে যোগ হয়েছে!`);
+    showToast💰 দৈনিক প্রফিট ৳${accumulated} আপনার একাউন্টে যোগ হয়েছে!`);
   }
 }
 
 function sendTelegramAlert(text) {
-  fetch(`https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`, {
+  fetch(https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ chat_id: TELEGRAM_CHAT_ID, text: text, parse_mode: 'HTML' })
@@ -995,11 +1017,12 @@ async function adminLoadUsers(){
         `;
       }
     });
-    code += `</div>`;
+    code += </div>;
   });
   $('adminPanelStatusBox').innerHTML = code;
 }
 
+// * সম্পূর্ণ ঠিক করা অ্যাডমিন সার্চ ফাংশন (যেখানে বাটন দেখাবে) *
 async function executeAdminSearch(){
   const keyword = $('adminSearchInput').value.trim();
   if(!keyword) return showToast('মোবাইল নম্বরটি টাইপ করুন');
@@ -1007,7 +1030,7 @@ async function executeAdminSearch(){
   const docRef = db.collection('users').doc(keyword);
   const snap = await docRef.get();
   
-  let code = `<h4 style="color:var(--accent-gold); margin-bottom:10px;">অনুসন্ধানের ফলাফল (${keyword}):</h4>`;
+  let code = <h4 style="color:var(--accent-gold); margin-bottom:10px;">অনুসন্ধানের ফলাফল (${keyword}):</h4>;
   if(!snap.exists){
     code += '<p style="font-size:12px; opacity:0.6;">এই মোবাইল নম্বরে কোনো অ্যাকাউন্ট পাওয়া যায়নি।</p>';
   } else {
@@ -1021,21 +1044,40 @@ async function executeAdminSearch(){
         <hr style="margin:10px 0; opacity:0.1;">
         <b>ডিপোজিট হিস্টোরি:</b><br>
     `;
-    if(!u.deposits || u.deposits.length === 0) code += '<span style="font-size:11px; opacity:0.5;">কোনো ডেটা নেই</span><br>';
-    else {
+    if(!u.deposits || u.deposits.length === 0) {
+      code += '<span style="font-size:11px; opacity:0.5;">কোনো ডেটা নেই</span><br>';
+    } else {
       u.deposits.forEach(d=>{
-        code += `<div style="font-size:11px; background:rgba(0,0,0,0.2); padding:5px; border-radius:4px; margin-top:4px;">${d.date} - ${d.plan} - ৳${d.amount} [${d.status.toUpperCase()}] TxID: ${d.tx || 'N/A'}</div>`;
+        let approveBtn = '';
+        if(d.status === 'pending') {
+          approveBtn = <button class="btn-primary" style="padding:6px; font-size:11px; margin-top:6px; border-radius:6px;" onclick="adminActionDeposit('${u.phone}','${d.id}', ${d.amount}, '${d.plan}')">Approve Deposit & Pack</button>;
+        }
+        let statusClass = d.status === 'success' ? 'status-success' : (d.status === 'pending' ? 'status-pending' : '');
+        
+        code += `
+          <div style="font-size:11px; background:rgba(0,0,0,0.2); padding:8px; border-radius:6px; margin-top:6px;">
+            ${d.date || ''} - ${d.plan} - ৳${d.amount}<br>
+            [<span class="${statusClass}">${d.status.toUpperCase()}</span>] TxID: <code>${d.tx || 'N/A'}</code>
+            ${approveBtn}
+          </div>
+        `;
       });
     }
     
-    code += `<br><b>উইথড্র হিস্টোরি:</b><br>`;
-    if(!u.withdrawals || u.withdrawals.length === 0) code += '<span style="font-size:11px; opacity:0.5;">কোনো ডেটা নেই</span><br>';
-    else {
+    code += <br><b>উইথড্র হিস্টোরি:</b><br>;
+    if(!u.withdrawals || u.withdrawals.length === 0) {
+      code += '<span style="font-size:11px; opacity:0.5;">কোনো ডেটা নেই</span><br>';
+    } else {
       u.withdrawals.forEach(w=>{
-        code += `<div style="font-size:11px; background:rgba(0,0,0,0.2); padding:5px; border-radius:4px; margin-top:4px;">${w.date} - ৳${w.amount} to ${w.number} [${w.status.toUpperCase()}]</div>`;
+        let statusClass = w.status === 'success' ? 'status-success' : (w.status === 'denied' ? 'status-denied' : 'status-pending');
+        code += `
+          <div style="font-size:11px; background:rgba(0,0,0,0.2); padding:6px; border-radius:6px; margin-top:4px;">
+            ${w.date || ''} - ৳${w.amount} to ${w.number} [<span class="${statusClass}">${w.status.toUpperCase()}</span>]
+          </div>
+        `;
       });
     }
-    code += `</div>`;
+    code += </div>;
   }
   $('adminPanelStatusBox').innerHTML = code;
 }
@@ -1050,6 +1092,7 @@ async function adminActionDeposit(phone, depId, amt, planName){
     const meta = SOLAR_PRODUCTS.find(x=>x.id === planName) || { id:planName, daily:50 };
     u.activePlans.push({ id: meta.id, daily: meta.daily, lastCreditTs: Date.now() });
 
+    // রেফার বোনাস (১৫%) আপডেট
     if(u.referrer){
       const pRef = db.collection('users').doc(u.referrer);
       const pSnap = await pRef.get();
@@ -1061,7 +1104,14 @@ async function adminActionDeposit(phone, depId, amt, planName){
     }
     await ref.update({ deposits: u.deposits, activePlans: u.activePlans });
     showToast('ডিপোজিট এবং ক্রিপ্টো প্যাকেজ সক্রিয় হয়েছে!');
-    adminLoadUsers();
+    
+    // সার্চ মোডে থাকলে রিয়েলটাইমে সার্চ ভিউ রিফ্রেশ করা
+    const currentSearchInput = $('adminSearchInput').value.trim();
+    if(currentSearchInput === phone) {
+      executeAdminSearch();
+    } else {
+      adminLoadUsers();
+    }
   }
 }
 
@@ -1079,4 +1129,5 @@ async function adminActionWithdraw(phone, wid, status){
 }
 </script>
 </body>
-  </html>
+</html>
+
